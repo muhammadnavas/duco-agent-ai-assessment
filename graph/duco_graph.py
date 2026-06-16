@@ -83,56 +83,56 @@ class AgentState(TypedDict):
 
 def intake_node(state: AgentState) -> AgentState:
     """Ingest and parse all 4 multi-modal inputs."""
-    print("\n[STEP] [DuCO-Agent] ── STEP 1: Intake Agent ──────────────────")
+    print("\n[STEP] [DuCO-Agent] -- STEP 1: Intake Agent ------------------")
     updates = run_intake_agent(state)
     return {**state, **updates}
 
 
 def code_lookup_node(state: AgentState) -> AgentState:
     """Look up / infer CPT and ICD-10 codes from clinical descriptions."""
-    print("\n[STEP] [DuCO-Agent] ── STEP 2: Code Lookup Agent ─────────────")
+    print("\n[STEP] [DuCO-Agent] -- STEP 2: Code Lookup Agent -------------")
     updates = run_code_lookup_agent(state)
     return {**state, **updates}
 
 
 def preauth_check_node(state: AgentState) -> AgentState:
     """Determine pre-authorization requirements for each CPT code and plan."""
-    print("\n[STEP] [DuCO-Agent] ── STEP 3: Pre-Auth Check Agent ──────────")
+    print("\n[STEP] [DuCO-Agent] -- STEP 3: Pre-Auth Check Agent ----------")
     updates = run_preauth_check_agent(state)
     return {**state, **updates}
 
 
 def cob_logic_node(state: AgentState) -> AgentState:
     """Apply Coordination of Benefits rules to determine primary/secondary payer."""
-    print("\n[STEP] [DuCO-Agent] ── STEP 4: COB Logic Agent ────────────────")
+    print("\n[STEP] [DuCO-Agent] -- STEP 4: COB Logic Agent ----------------")
     updates = run_cob_logic_agent(state)
     return {**state, **updates}
 
 
 def financial_calc_node(state: AgentState) -> AgentState:
     """Calculate precise financial liability for each plan and patient."""
-    print("\n[STEP] [DuCO-Agent] ── STEP 5: Financial Calculation Agent ───")
+    print("\n[STEP] [DuCO-Agent] -- STEP 5: Financial Calculation Agent ---")
     updates = run_financial_calc_agent(state)
     return {**state, **updates}
 
 
 def letter_gen_node(state: AgentState) -> AgentState:
     """Generate clinically sound pre-authorization letters for both plans."""
-    print("\n[STEP] [DuCO-Agent] ── STEP 6: Letter Generation Agent ───────")
+    print("\n[STEP] [DuCO-Agent] -- STEP 6: Letter Generation Agent -------")
     updates = run_letter_gen_agent(state)
     return {**state, **updates}
 
 
 def visual_output_node(state: AgentState) -> AgentState:
     """Generate visual cost flow chart and HTML report."""
-    print("\n[STEP] [DuCO-Agent] ── STEP 7: Visual Output Agent ────────────")
+    print("\n[STEP] [DuCO-Agent] -- STEP 7: Visual Output Agent ------------")
     updates = run_visual_output_agent(state)
     return {**state, **updates}
 
 
 def audio_brief_node(state: AgentState) -> AgentState:
     """Generate patient-friendly audio briefing."""
-    print("\n[STEP] [DuCO-Agent] ── STEP 8: Audio Brief Agent ─────────────")
+    print("\n[STEP] [DuCO-Agent] -- STEP 8: Audio Brief Agent -------------")
     updates = run_audio_brief_agent(state)
     return {**state, **updates}
 

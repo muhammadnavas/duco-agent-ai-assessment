@@ -115,7 +115,7 @@ This has been your DuCO Agent briefing. Good luck with the surgery, Aarav!
         audio_path = None
         messages.append("[WARN]  gTTS not installed — audio script saved as text only")
 
-    print("  [OK] DuCO-Agent pipeline complete! 🎉")
+    print("  [OK] DuCO-Agent pipeline complete!")
     messages.append("[OK] DuCO-Agent full pipeline COMPLETE")
 
     return {

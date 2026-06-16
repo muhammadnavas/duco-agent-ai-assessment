@@ -10,6 +10,7 @@ import re
 import fitz  # PyMuPDF
 import google.generativeai as genai
 from dotenv import load_dotenv
+from tools.model_helper import get_available_model
 
 load_dotenv()
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
@@ -36,7 +37,7 @@ def parse_mri_report(pdf_path: str) -> dict:
     raw_text = extract_text_from_pdf(pdf_path)
 
     # Then use Gemini to structure the clinical content
-    model_name = os.getenv("GEMINI_MODEL") or "gemini-2.5-flash"
+    model_name = get_available_model("GEMINI_MODEL", "gemini-2.5-flash")
     model = genai.GenerativeModel(model_name)
 
     prompt = f"""You are a clinical AI assistant specializing in radiology report interpretation.
@@ -185,7 +186,7 @@ def parse_user_query(txt_path: str) -> dict:
     with open(txt_path, "r", encoding="utf-8") as f:
         content = f.read()
 
-    model_name = os.getenv("GEMINI_MODEL") or "gemini-2.5-flash"
+    model_name = get_available_model("GEMINI_MODEL", "gemini-2.5-flash")
     model = genai.GenerativeModel(model_name)
     prompt = f"""You are a health insurance AI assistant. A patient has submitted this voice-to-text query:
 

@@ -48,11 +48,11 @@ def setup_mock_inputs():
             sys.path.insert(0, inputs_dir)
             from generate_mri_pdf import generate_mri_report
             generate_mri_report()
-            console.print("[green]✅ MRI PDF generated successfully[/green]")
+            console.print("[green]OK MRI PDF generated successfully[/green]")
         except Exception as e:
-            console.print(f"[red]❌ MRI PDF generation failed: {e}[/red]")
+            console.print(f"[red]ERROR MRI PDF generation failed: {e}[/red]")
     else:
-        console.print("[dim]✅ MRI PDF already exists[/dim]")
+        console.print("[dim]OK MRI PDF already exists[/dim]")
 
 
 def check_env():
@@ -60,7 +60,7 @@ def check_env():
     api_key = os.getenv("GOOGLE_API_KEY")
     if not api_key:
         console.print(Panel(
-            "[bold red]❌ GOOGLE_API_KEY not set![/bold red]\n\n"
+            "[bold red]ERROR GOOGLE_API_KEY not set![/bold red]\n\n"
             "Please create a [yellow].env[/yellow] file with:\n"
             "[cyan]GOOGLE_API_KEY=your_key_here[/cyan]\n\n"
             "See [dim].env.example[/dim] for reference.",
@@ -118,7 +118,7 @@ def run_pipeline():
 
     console.print("\n[bold]Compiling LangGraph...[/bold]")
     graph = compile_graph()
-    console.print("[green]✅ Graph compiled[/green]\n")
+    console.print("[green]OK Graph compiled[/green]\n")
 
     # ── Execute ────────────────────────────────────────────────
     console.rule("[bold blue]Pipeline Execution[/bold blue]")
@@ -134,57 +134,56 @@ def run_pipeline():
             console.print(f"  [dim]Step:[/dim] [cyan]{step}[/cyan]")
 
     elapsed = time.time() - start_time
-    console.print(f"\n[green]✅ Pipeline complete in {elapsed:.1f}s[/green]\n")
+    console.print(f"\n[green]OK Pipeline complete in {elapsed:.1f}s[/green]\n")
 
     return final_state
 
 
 def print_results(state: dict):
     """Print a rich summary of results to the console."""
-    console.rule("[bold green]📊 DuCO-Agent Results[/bold green]")
+    console.rule("[bold green]DuCO-Agent Results[/bold green]")
 
     financial = state.get("financial_breakdown", {})
     family = financial.get("family_summary", {})
 
-    # ── Financial Summary Table ────────────────────────────────
-    table = Table(title="Financial Summary — Sen Family", box=box.ROUNDED,
+    # -- Financial Summary Table --------------------------------
+    table = Table(title="Financial Summary - Sen Family", box=box.ROUNDED,
                   border_style="blue", show_header=True, header_style="bold cyan")
     table.add_column("Category", style="dim", width=35)
     table.add_column("Amount (INR)", justify="right", style="bold")
 
-    table.add_row("Total Medical Bills", f"₹{family.get('total_medical_bills', 0):,.2f}")
-    table.add_row("Insurance Covers (Both Plans)", f"₹{family.get('total_covered_by_insurance', 0):,.2f}",)
-    table.add_row("Plan B (Insurer2) Total Pays", f"₹{family.get('plan_b_total_pays', 0):,.2f}")
-    table.add_row("Plan A (Insurer1) Total Pays", f"₹{family.get('plan_a_total_pays', 0):,.2f}")
+    table.add_row("Total Medical Bills", f"INR {family.get('total_medical_bills', 0):,.2f}")
+    table.add_row("Insurance Covers (Both Plans)", f"INR {family.get('total_covered_by_insurance', 0):,.2f}",)
+    table.add_row("Plan B (Insurer2) Total Pays", f"INR {family.get('plan_b_total_pays', 0):,.2f}")
+    table.add_row("Plan A (Insurer1) Total Pays", f"INR {family.get('plan_a_total_pays', 0):,.2f}")
     table.add_row("", "")  # spacer
-    table.add_row("[bold red]Family Out-of-Pocket (OOP)", f"[bold red]₹{family.get('total_family_oop', 0):,.2f}")
-    table.add_row("[green]Savings from Dual Coverage", f"[green]₹{family.get('total_savings_from_dual_coverage', 0):,.2f}")
+    table.add_row("[bold red]Family Out-of-Pocket (OOP)", f"[bold red]INR {family.get('total_family_oop', 0):,.2f}")
+    table.add_row("[green]Savings from Dual Coverage", f"[green]INR {family.get('total_savings_from_dual_coverage', 0):,.2f}")
     table.add_row("Coverage Percentage", f"{family.get('coverage_percentage', 0):.1f}%")
 
     console.print(table)
 
-    # ── COB Summary ───────────────────────────────────────────
-    console.print("\n[bold cyan]⚖️ COB Determination[/bold cyan]")
-    console.print(f"  Aarav's Surgery: [green]Primary → Plan B (Insurer2)[/green] | [blue]Secondary → Plan A (Insurer1)[/blue]")
-    console.print(f"  Priya's PT:      [blue]Primary → Plan A (Insurer1)[/blue] | [green]Secondary → Plan B (Insurer2)[/green]")
+    console.print("\n[bold cyan]COB Determination[/bold cyan]")
+    console.print(f"  Aarav's Surgery: [green]Primary -> Plan B (Insurer2)[/green] | [blue]Secondary -> Plan A (Insurer1)[/blue]")
+    console.print(f"  Priya's PT:      [blue]Primary -> Plan A (Insurer1)[/blue] | [green]Secondary -> Plan B (Insurer2)[/green]")
 
     # ── Outputs ───────────────────────────────────────────────
-    console.print("\n[bold cyan]📄 Generated Outputs[/bold cyan]")
+    console.print("\n[bold cyan]Generated Outputs[/bold cyan]")
     outputs_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "outputs")
     for fname in ["duco_report.html", "preauth_letter_plan_a.pdf", "preauth_letter_plan_b.pdf", "audio_brief.mp3", "audio_brief_script.txt"]:
         fpath = os.path.join(outputs_dir, fname)
         if os.path.exists(fpath):
             size_kb = os.path.getsize(fpath) / 1024
-            console.print(f"  [green]✅[/green] {fname} [dim]({size_kb:.1f} KB)[/dim]")
+            console.print(f"  [green]OK[/green] {fname} [dim]({size_kb:.1f} KB)[/dim]")
         else:
-            console.print(f"  [yellow]⚠️[/yellow]  {fname} [dim](not generated)[/dim]")
+            console.print(f"  [yellow]WARN[/yellow]  {fname} [dim](not generated)[/dim]")
 
     # ── Messages ──────────────────────────────────────────────
-    console.print("\n[bold cyan]📋 Agent Messages[/bold cyan]")
+    console.print("\n[bold cyan]Agent Messages[/bold cyan]")
     for msg in state.get("messages", [])[-10:]:  # Last 10
         console.print(f"  {msg}")
 
-    console.print("\n[bold green]🎉 DuCO-Agent completed successfully![/bold green]")
+    console.print("\n[bold green]DuCO-Agent completed successfully![/bold green]")
     console.print(f"[dim]Open [cyan]outputs/duco_report.html[/cyan] in your browser for the full report.[/dim]")
 
 
@@ -218,7 +217,7 @@ def main():
     if final_state:
         print_results(final_state)
     else:
-        console.print("[red]❌ Pipeline failed — no final state returned[/red]")
+        console.print("[red]ERROR Pipeline failed — no final state returned[/red]")
         sys.exit(1)
 
 

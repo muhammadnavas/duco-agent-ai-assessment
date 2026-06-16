@@ -263,14 +263,14 @@ def run_financial_calc_agent(state: dict) -> dict:
         }
     }
 
-    print(f"  [OK] Total billed: ₹{total_billed:,.0f}")
-    print(f"  [OK] Insurance covers: ₹{total_insurance:,.0f} ({financial_breakdown['family_summary']['coverage_percentage']}%)")
-    print(f"  [OK] Family OOP: ₹{total_oop:,.0f}")
-    print(f"  [OK] Savings from dual coverage: ₹{total_savings:,.0f}")
+    print(f"  [OK] Total billed: INR {total_billed:,.0f}")
+    print(f"  [OK] Insurance covers: INR {total_insurance:,.0f} ({financial_breakdown['family_summary']['coverage_percentage']}%)")
+    print(f"  [OK] Family OOP: INR {total_oop:,.0f}")
+    print(f"  [OK] Savings from dual coverage: INR {total_savings:,.0f}")
 
-    messages.append(f"[OK] Aarav OOP: ₹{aarav_oop:,.2f} (saved ₹{aarav_savings:,.2f} from dual coverage)")
-    messages.append(f"[OK] Priya OOP: ₹{priya_oop:,.2f} (saved ₹{priya_savings:,.2f} from dual coverage)")
-    messages.append(f"[OK] Family total OOP: ₹{total_oop:,.2f} on ₹{total_billed:,.0f} in bills")
+    messages.append(f"[OK] Aarav OOP: INR {aarav_oop:,.2f} (saved INR {aarav_savings:,.2f} from dual coverage)")
+    messages.append(f"[OK] Priya OOP: INR {priya_oop:,.2f} (saved INR {priya_savings:,.2f} from dual coverage)")
+    messages.append(f"[OK] Family total OOP: INR {total_oop:,.2f} on INR {total_billed:,.0f} in bills")
 
     return {
         "financial_breakdown": financial_breakdown,

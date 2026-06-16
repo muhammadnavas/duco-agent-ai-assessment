@@ -14,6 +14,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import google.generativeai as genai
 from dotenv import load_dotenv
 from tools.cpt_icd_mapper import lookup_cpt_by_description, lookup_icd10_by_description, get_cpt_details
+from tools.model_helper import get_available_model
 
 load_dotenv()
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
@@ -38,7 +39,7 @@ def run_code_lookup_agent(state: dict) -> dict:
     # ── 1. Infer CPT codes for PT Invoice ─────────────────────
     pt_invoice = parsed.get("pt_invoice", {})
     if not pt_invoice.get("cpt_codes_present", False):
-        print("  [SEARCH] PT invoice has no CPT codes — inferring from description...")
+        print("  [SEARCH] PT invoice has no CPT codes - inferring from description...")
         pt_description = pt_invoice.get("clinical_description", "")
         handwritten = " ".join(pt_invoice.get("handwritten_notes", []))
         full_description = f"{pt_description} {handwritten}"
@@ -161,7 +162,7 @@ def run_code_lookup_agent(state: dict) -> dict:
 def _llm_infer_cpt(clinical_description: str, line_items: list) -> list[dict]:
     """Use Gemini to infer CPT codes from clinical description."""
     try:
-        model_name = os.getenv("GEMINI_MODEL") or "gemini-2.5-flash"
+        model_name = get_available_model("GEMINI_MODEL", "gemini-2.5-flash")
         model = genai.GenerativeModel(model_name)
         items_text = "\n".join([f"  - {item.get('description', '')}: ₹{item.get('total', 0)}" for item in line_items])
         prompt = f"""You are a medical coding specialist. Based on this clinical description and service line items, identify the most appropriate CPT codes.
@@ -197,7 +198,7 @@ Return ONLY valid JSON array."""
         codes = json.loads(raw)
         return codes if isinstance(codes, list) else []
     except Exception as e:
-        print(f"  [WARN]  LLM CPT inference failed: {e}")
+        print(f"  [WARN]  LLM CPT inference failed")
         # Deterministic fallback
         return [
             {
@@ -222,7 +223,7 @@ Return ONLY valid JSON array."""
 def _llm_infer_icd10(clinical_description: str, diagnosis: str) -> list[dict]:
     """Use Gemini to infer ICD-10 codes from clinical description."""
     try:
-        model_name = os.getenv("GEMINI_MODEL") or "gemini-2.5-flash"
+        model_name = get_available_model("GEMINI_MODEL", "gemini-2.5-flash")
         model = genai.GenerativeModel(model_name)
         prompt = f"""You are a medical coding specialist. Based on this clinical information, identify the appropriate ICD-10-CM codes.
 
