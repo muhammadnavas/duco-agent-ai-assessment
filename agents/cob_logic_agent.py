@@ -15,6 +15,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import google.generativeai as genai
 from dotenv import load_dotenv
+from tools.model_helper import get_available_model
 
 load_dotenv()
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
@@ -61,7 +62,7 @@ def run_cob_logic_agent(state: dict) -> dict:
     parsed = state.get("parsed_documents", {})
     messages = []
 
-    print("  📋 Applying COB rules for dual coverage scenario...")
+    print("  [COB] Applying COB rules for dual coverage scenario...")
 
     # ── Gather claim information ───────────────────────────────
     aarav_surgery = parsed.get("surgeon_estimate", {})
@@ -128,8 +129,8 @@ def run_cob_logic_agent(state: dict) -> dict:
     messages.append(f"[OK] COB Determination for Priya: PRIMARY = {cob_priya['primary_plan']['plan_name']}")
     messages.append(f"[OK] COB Rule Applied: Subscriber Rule (policyholder vs dependent status)")
 
-    print(f"  [OK] Aarav: PRIMARY → Plan B (Insurer2) | SECONDARY → Plan A (Insurer1)")
-    print(f"  [OK] Priya: PRIMARY → Plan A (Insurer1) | SECONDARY → Plan B (Insurer2)")
+    print(f"  [OK] Aarav: PRIMARY -> Plan B (Insurer2) | SECONDARY -> Plan A (Insurer1)")
+    print(f"  [OK] Priya: PRIMARY -> Plan A (Insurer1) | SECONDARY -> Plan B (Insurer2)")
 
     return {
         "cob_aarav": cob_aarav,
@@ -143,7 +144,7 @@ def run_cob_logic_agent(state: dict) -> dict:
 def _generate_cob_reasoning(cob_aarav: dict, cob_priya: dict, plan_a: dict, plan_b: dict) -> str:
     """Use Gemini to generate a clear, clinically sound COB reasoning explanation."""
     try:
-        model_name = os.getenv("GEMINI_MODEL") or "gemini-2.5-flash"
+        model_name = get_available_model("GEMINI_MODEL", "gemini-2.5-flash")
         model = genai.GenerativeModel(model_name)
         prompt = f"""You are a senior health insurance COB (Coordination of Benefits) specialist.
 
