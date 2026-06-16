@@ -15,7 +15,6 @@ import operator
 from langgraph.graph import StateGraph, END, START
 from langgraph.checkpoint.memory import MemorySaver
 
-# Add project root to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from agents.intake_agent import run_intake_agent
@@ -28,48 +27,37 @@ from agents.visual_output_agent import run_visual_output_agent
 from agents.audio_brief_agent import run_audio_brief_agent
 
 
-# ────────────────────────────────────────────────────────────
-# Agent State Definition (TypedDict)
-# ────────────────────────────────────────────────────────────
 class AgentState(TypedDict):
-    # ── Inputs ──
     raw_inputs: dict                   # File paths to all 4 inputs
     parsed_documents: dict             # Structured output from parsers
 
-    # ── Clinical Codes ──
     cpt_codes: list[dict]              # Extracted/inferred CPT codes with details
     icd10_codes: list[dict]            # Extracted/inferred ICD-10 codes
     code_lookup_complete: bool
     code_validation_errors: list[str]
 
-    # ── Insurance Plan Data ──
     plan_a_data: dict                  # Insurer1 Plan A configuration
     plan_b_data: dict                  # Insurer2 Plan B configuration
 
-    # ── COB Determination ──
     cob_aarav: dict                    # COB result for Aarav's surgery
     cob_priya: dict                    # COB result for Priya's PT
     cob_reasoning: str                 # LLM explanation of COB logic
 
-    # ── Pre-Authorization ──
     preauth_required: dict             # {cpt_code: {plan_a: bool, plan_b: bool}}
     preauth_status: str                # "required" / "not_required" / "partial"
 
-    # ── Financial Calculations ──
     financial_breakdown: dict          # Full itemized breakdown
     aarav_oop: float                   # Aarav out-of-pocket total
     priya_oop: float                   # Priya out-of-pocket total
     total_oop: float                   # Combined OOP
     savings_from_dual_coverage: float  # OOP saved vs single-plan coverage
 
-    # ── Generated Outputs ──
     preauth_letters: dict              # {plan_a: path, plan_b: path}
     cost_flow_html: str                # HTML cost flow visualization
     audio_brief_text: str              # Patient-friendly audio script
     audio_brief_path: str              # Path to generated audio file
     final_report_html: str             # Combined HTML report
 
-    # ── Control Flow ──
     messages: Annotated[list, operator.add]   # Conversation log
     current_step: str
     validation_errors: list[str]
@@ -77,9 +65,6 @@ class AgentState(TypedDict):
     is_complete: bool
 
 
-# ────────────────────────────────────────────────────────────
-# Node Wrappers
-# ────────────────────────────────────────────────────────────
 
 def intake_node(state: AgentState) -> AgentState:
     """Ingest and parse all 4 multi-modal inputs."""
@@ -137,9 +122,6 @@ def audio_brief_node(state: AgentState) -> AgentState:
     return {**state, **updates}
 
 
-# ────────────────────────────────────────────────────────────
-# Conditional Routing Functions
-# ────────────────────────────────────────────────────────────
 
 def should_retry_code_lookup(state: AgentState) -> str:
     """
@@ -168,16 +150,12 @@ def preauth_routing(state: AgentState) -> str:
     return "no_letter_required"
 
 
-# ────────────────────────────────────────────────────────────
-# Build LangGraph
-# ────────────────────────────────────────────────────────────
 
 def build_duco_graph() -> StateGraph:
     """Construct and compile the DuCO-Agent LangGraph."""
 
     workflow = StateGraph(AgentState)
 
-    # ── Register Nodes ──
     workflow.add_node("intake", intake_node)
     workflow.add_node("code_lookup", code_lookup_node)
     workflow.add_node("preauth_check", preauth_check_node)
@@ -187,13 +165,10 @@ def build_duco_graph() -> StateGraph:
     workflow.add_node("visual_output", visual_output_node)
     workflow.add_node("audio_brief", audio_brief_node)
 
-    # ── Entry Point ──
     workflow.add_edge(START, "intake")
 
-    # ── intake → code_lookup ──
     workflow.add_edge("intake", "code_lookup")
 
-    # ── code_lookup → conditional routing ──
     workflow.add_conditional_edges(
         "code_lookup",
         should_retry_code_lookup,
@@ -204,13 +179,10 @@ def build_duco_graph() -> StateGraph:
         }
     )
 
-    # ── preauth_check → cob_logic (always, preauth info feeds COB) ──
     workflow.add_edge("preauth_check", "cob_logic")
 
-    # ── cob_logic → financial_calc ──
     workflow.add_edge("cob_logic", "financial_calc")
 
-    # ── financial_calc → letter_gen (conditional on preauth requirement) ──
     workflow.add_conditional_edges(
         "financial_calc",
         preauth_routing,
@@ -220,13 +192,10 @@ def build_duco_graph() -> StateGraph:
         }
     )
 
-    # ── letter_gen → visual_output ──
     workflow.add_edge("letter_gen", "visual_output")
 
-    # ── visual_output → audio_brief ──
     workflow.add_edge("visual_output", "audio_brief")
 
-    # ── audio_brief → END ──
     workflow.add_edge("audio_brief", END)
 
     return workflow
@@ -239,9 +208,6 @@ def compile_graph():
     return workflow.compile(checkpointer=memory)
 
 
-# ────────────────────────────────────────────────────────────
-# Graph Visualization Helper
-# ────────────────────────────────────────────────────────────
 def print_graph_structure():
     """Print the graph structure for debugging."""
     workflow = build_duco_graph()

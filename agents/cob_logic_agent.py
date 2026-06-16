@@ -21,7 +21,6 @@ load_dotenv()
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
 
-# COB Rules Reference
 COB_RULES = """
 COORDINATION OF BENEFITS (COB) RULES — STANDARD INDUSTRY GUIDELINES:
 
@@ -64,16 +63,12 @@ def run_cob_logic_agent(state: dict) -> dict:
 
     print("  [COB] Applying COB rules for dual coverage scenario...")
 
-    # ── Gather claim information ───────────────────────────────
     aarav_surgery = parsed.get("surgeon_estimate", {})
     priya_pt = parsed.get("pt_invoice", {})
 
     aarav_surgery_total = aarav_surgery.get("total_estimated_charge", 450000)
     priya_pt_total = priya_pt.get("total_amount", 30000)
 
-    # ── Apply COB Logic for Aarav's Surgery ───────────────────
-    # Rule: Aarav is PRIMARY on Plan B (Insurer2), DEPENDENT on Plan A (Insurer1)
-    # Therefore: Plan B pays first, Plan A pays second.
 
     plan_a_id = plan_a.get("plan_id", "Plan A")
     plan_b_id = plan_b.get("plan_id", "Plan B")
@@ -98,9 +93,6 @@ def run_cob_logic_agent(state: dict) -> dict:
         "cob_rule_applied": "Subscriber Rule: Plan where patient is primary policyholder pays first",
     }
 
-    # ── Apply COB Logic for Priya's PT Bills ─────────────────
-    # Rule: Priya is PRIMARY on Plan A (Insurer1), DEPENDENT on Plan B (Insurer2)
-    # Therefore: Plan A pays first, Plan B pays second.
 
     cob_priya = {
         "patient": "Priya Sen",
@@ -122,7 +114,6 @@ def run_cob_logic_agent(state: dict) -> dict:
         "cob_rule_applied": "Subscriber Rule: Plan where patient is primary policyholder pays first",
     }
 
-    # ── LLM Reasoning for Clinical Explanation ────────────────
     cob_reasoning = _generate_cob_reasoning(cob_aarav, cob_priya, plan_a, plan_b)
 
     messages.append(f"[OK] COB Determination for Aarav: PRIMARY = {cob_aarav['primary_plan']['plan_name']}")

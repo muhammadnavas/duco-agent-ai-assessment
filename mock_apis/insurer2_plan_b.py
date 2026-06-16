@@ -11,9 +11,6 @@ import uvicorn
 
 app = FastAPI(title="Insurer2 Plan B API", version="1.0.0")
 
-# ────────────────────────────────────────────────────────────
-# Plan B — Master Benefits Configuration
-# ────────────────────────────────────────────────────────────
 PLAN_B_CONFIG = {
     "plan_id": "INSURER2-PLAN-B-2026",
     "insurer": "Insurer2 Assurance Corporation",
@@ -67,7 +64,6 @@ PLAN_B_CONFIG = {
     },
 }
 
-# CPT-level allowed amounts (Plan B in-network contracted rates)
 PLAN_B_ALLOWED_AMOUNTS = {
     "29888": 330000,   # ACL Reconstruction — contracted rate INR 3,30,000
     "29881": 92000,    # Meniscectomy — contracted rate INR 92,000
@@ -76,9 +72,6 @@ PLAN_B_ALLOWED_AMOUNTS = {
 }
 
 
-# ────────────────────────────────────────────────────────────
-# Endpoints
-# ────────────────────────────────────────────────────────────
 
 @app.get("/plan", summary="Get full Plan B configuration")
 def get_plan():

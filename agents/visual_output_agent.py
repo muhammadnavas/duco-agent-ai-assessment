@@ -42,7 +42,6 @@ def run_visual_output_agent(state: dict) -> dict:
     output_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "outputs")
     os.makedirs(output_dir, exist_ok=True)
 
-    # Extract key numbers
     family = financial.get("family_summary", {})
     aarav_data = financial.get("aarav", {})
     priya_data = financial.get("priya", {})
@@ -64,7 +63,6 @@ def run_visual_output_agent(state: dict) -> dict:
     priya_plan_b = priya_summary.get("plan_b_pays", 0)
     priya_oop = priya_summary.get("patient_oop", 0)
 
-    # ── 1. Generate Sankey Diagram ─────────────────────────────
     cost_flow_html = ""
     if PLOTLY_AVAILABLE:
         cost_flow_html = _generate_sankey(
@@ -77,7 +75,6 @@ def run_visual_output_agent(state: dict) -> dict:
         cost_flow_html = "<p><em>Plotly not available — install with: pip install plotly kaleido</em></p>"
         messages.append("[WARN]  Sankey diagram skipped (plotly not installed)")
 
-    # ── 2. Generate HTML Report ────────────────────────────────
     html_path = os.path.join(output_dir, "duco_report.html")
     html_content = _generate_html_report(
         financial=financial,
@@ -113,7 +110,6 @@ def _generate_sankey(
 ) -> str:
     """Generate an interactive Sankey diagram showing money flow."""
 
-    # Node labels
     labels = [
         "Aarav's Surgery\n(₹4,50,000)",           # 0
         "Priya's PT Bills\n(₹30,000)",              # 1
@@ -126,7 +122,6 @@ def _generate_sankey(
         "Insurance Covered",                        # 8
     ]
 
-    # Source → Target → Value
     source = [0, 0, 0, 1, 1, 1]
     target = [2, 4, 6, 3, 5, 7]
     values = [
