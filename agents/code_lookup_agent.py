@@ -161,7 +161,8 @@ def run_code_lookup_agent(state: dict) -> dict:
 def _llm_infer_cpt(clinical_description: str, line_items: list) -> list[dict]:
     """Use Gemini to infer CPT codes from clinical description."""
     try:
-        model = genai.GenerativeModel("gemini-2.5-flash")
+        model_name = os.getenv("GEMINI_MODEL") or "gemini-2.5-flash"
+        model = genai.GenerativeModel(model_name)
         items_text = "\n".join([f"  - {item.get('description', '')}: ₹{item.get('total', 0)}" for item in line_items])
         prompt = f"""You are a medical coding specialist. Based on this clinical description and service line items, identify the most appropriate CPT codes.
 
@@ -221,7 +222,8 @@ Return ONLY valid JSON array."""
 def _llm_infer_icd10(clinical_description: str, diagnosis: str) -> list[dict]:
     """Use Gemini to infer ICD-10 codes from clinical description."""
     try:
-        model = genai.GenerativeModel("gemini-2.5-flash")
+        model_name = os.getenv("GEMINI_MODEL") or "gemini-2.5-flash"
+        model = genai.GenerativeModel(model_name)
         prompt = f"""You are a medical coding specialist. Based on this clinical information, identify the appropriate ICD-10-CM codes.
 
 Clinical Description: {clinical_description}

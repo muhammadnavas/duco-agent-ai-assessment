@@ -143,7 +143,8 @@ def run_cob_logic_agent(state: dict) -> dict:
 def _generate_cob_reasoning(cob_aarav: dict, cob_priya: dict, plan_a: dict, plan_b: dict) -> str:
     """Use Gemini to generate a clear, clinically sound COB reasoning explanation."""
     try:
-        model = genai.GenerativeModel("gemini-2.5-flash")
+        model_name = os.getenv("GEMINI_MODEL") or "gemini-2.5-flash"
+        model = genai.GenerativeModel(model_name)
         prompt = f"""You are a senior health insurance COB (Coordination of Benefits) specialist.
 
 SCENARIO:
