@@ -56,7 +56,6 @@ def run_preauth_check_agent(state: dict) -> dict:
         print(f"  CPT {cpt} ({patient}): Plan A={status_a} | Plan B={status_b}")
         messages.append(f"CPT {cpt} pre-auth: Plan A → {'Required' if plan_a_required else 'Not Required'} | Plan B → {'Required' if plan_b_required else 'Not Required'}")
 
-    # ── Determine Overall Status ───────────────────────────────
     any_required = any(v["either_required"] for v in preauth_required.values())
     all_required = all(v["either_required"] for v in preauth_required.values()) if preauth_required else False
 
@@ -70,7 +69,6 @@ def run_preauth_check_agent(state: dict) -> dict:
         status = "partial"
         print(f"  [WARN]  Pre-authorization REQUIRED for some procedures")
 
-    # ── Summary ───────────────────────────────────────────────
     surgical_codes = [cpt for cpt, v in preauth_required.items() if v["claim_type"] == "surgical"]
     pt_codes = [cpt for cpt, v in preauth_required.items() if v["claim_type"] == "physical_therapy"]
 

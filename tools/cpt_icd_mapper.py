@@ -6,11 +6,7 @@ Used by the code_lookup_agent to map clinical descriptions to codes.
 """
 from typing import Optional
 
-# ────────────────────────────────────────────────────────────
-# CPT Code Reference Database
-# ────────────────────────────────────────────────────────────
 CPT_DATABASE = {
-    # Physical Therapy
     "97161": {
         "description": "Physical therapy evaluation, low complexity",
         "category": "Physical Therapy",
@@ -55,7 +51,6 @@ CPT_DATABASE = {
         "keywords": ["therapeutic activities", "functional activities", "ADL training"],
         "requires_preauth": False,
     },
-    # Orthopedic Surgery — Knee
     "29888": {
         "description": "Arthroscopically aided anterior cruciate ligament repair/augmentation or reconstruction",
         "category": "Orthopedic Surgery",
@@ -88,11 +83,7 @@ CPT_DATABASE = {
     },
 }
 
-# ────────────────────────────────────────────────────────────
-# ICD-10 Code Reference Database
-# ────────────────────────────────────────────────────────────
 ICD10_DATABASE = {
-    # Musculoskeletal — Back/Spine
     "M54.5": {
         "description": "Low back pain",
         "keywords": ["low back pain", "back pain", "lumbar pain", "LBP", "chronic back pain", "back ache",
@@ -110,7 +101,6 @@ ICD10_DATABASE = {
         "description": "Spondylosis without myelopathy or radiculopathy, lumbar region",
         "keywords": ["spondylosis", "lumbar spondylosis", "degenerative disc"],
     },
-    # Musculoskeletal — Knee/ACL
     "M23.619": {
         "description": "Other spontaneous disruption of anterior cruciate ligament of right knee",
         "keywords": ["ACL tear", "ACL rupture", "anterior cruciate ligament tear", "ACL injury", "ACL disruption"],
@@ -127,7 +117,6 @@ ICD10_DATABASE = {
         "description": "Sprain of anterior cruciate ligament of right knee, initial encounter",
         "keywords": ["ACL sprain", "knee sprain initial"],
     },
-    # Physical Therapy Diagnoses
     "Z47.89": {
         "description": "Encounter for other orthopedic aftercare",
         "keywords": ["post-op care", "physical therapy aftercare", "rehabilitation"],
@@ -138,9 +127,6 @@ ICD10_DATABASE = {
     },
 }
 
-# ────────────────────────────────────────────────────────────
-# Functions
-# ────────────────────────────────────────────────────────────
 
 def lookup_cpt_by_description(description: str) -> list[dict]:
     """
@@ -216,7 +202,6 @@ def requires_preauth(cpt_code: str) -> bool:
 
 
 if __name__ == "__main__":
-    # Quick test
     print("=== CPT Lookup Test ===")
     results = lookup_cpt_by_description("Physical Therapy Evaluation and Therapeutic Exercise for back pain")
     for r in results:

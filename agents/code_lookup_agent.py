@@ -36,7 +36,6 @@ def run_code_lookup_agent(state: dict) -> dict:
     all_cpt_codes = []
     all_icd10_codes = []
 
-    # ── 1. Infer CPT codes for PT Invoice ─────────────────────
     pt_invoice = parsed.get("pt_invoice", {})
     if not pt_invoice.get("cpt_codes_present", False):
         print("  [SEARCH] PT invoice has no CPT codes - inferring from description...")
@@ -44,15 +43,12 @@ def run_code_lookup_agent(state: dict) -> dict:
         handwritten = " ".join(pt_invoice.get("handwritten_notes", []))
         full_description = f"{pt_description} {handwritten}"
 
-        # Keyword-based lookup
         cpt_matches = lookup_cpt_by_description(full_description)
         icd_matches = lookup_icd10_by_description(full_description)
 
-        # LLM-based inference for higher accuracy
         cpt_from_llm = _llm_infer_cpt(full_description, pt_invoice.get("line_items", []))
         icd_from_llm = _llm_infer_icd10(full_description, pt_invoice.get("diagnosis_mentioned", ""))
 
-        # Merge: LLM result takes precedence, keyword as backup
         pt_cpt_codes = cpt_from_llm if cpt_from_llm else [c for c in cpt_matches[:3]]
         pt_icd_codes = icd_from_llm if icd_from_llm else [i for i in icd_matches[:2]]
 
@@ -70,7 +66,6 @@ def run_code_lookup_agent(state: dict) -> dict:
         messages.append(f"[OK] PT Invoice: Inferred CPT codes: {[c['cpt_code'] for c in pt_cpt_codes]}")
         messages.append(f"[OK] PT Invoice: Inferred ICD-10 codes: {[i['icd10_code'] for i in pt_icd_codes]}")
     else:
-        # Extract existing codes from line items
         for item in pt_invoice.get("line_items", []):
             if item.get("cpt_code"):
                 details = get_cpt_details(item["cpt_code"]) or {
@@ -82,7 +77,6 @@ def run_code_lookup_agent(state: dict) -> dict:
                 details["source"] = "extracted"
                 all_cpt_codes.append(details)
 
-    # ── 2. Process Surgeon Estimate (CPT codes already present) ──
     surgeon_est = parsed.get("surgeon_estimate", {})
     for proc in surgeon_est.get("procedure_codes", []):
         cpt_code = proc.get("cpt_code", "").strip()
@@ -100,7 +94,6 @@ def run_code_lookup_agent(state: dict) -> dict:
 
     messages.append(f"[OK] Surgeon Estimate: Confirmed CPT codes: {[p['cpt_code'] for p in surgeon_est.get('procedure_codes', [])]}")
 
-    # ── 3. Process MRI Report ICD-10 Codes ───────────────────
     mri_report = parsed.get("mri_report", {})
     for icd in mri_report.get("icd10_codes", []):
         icd_entry = {
@@ -110,14 +103,12 @@ def run_code_lookup_agent(state: dict) -> dict:
             "claim_type": "surgical",
             "source": "extracted_from_mri",
         }
-        # Avoid duplicates
         if not any(x["icd10_code"] == icd_entry["icd10_code"] for x in all_icd10_codes):
             all_icd10_codes.append(icd_entry)
 
     mri_icd_codes = [i.get("code") or i.get("icd10_code", "") for i in mri_report.get("icd10_codes", [])]
     messages.append(f"[OK] MRI Report: Confirmed ICD-10 codes: {mri_icd_codes}")
 
-    # ── 4. Validate Codes ─────────────────────────────────────
     validation_errors = []
     aarav_cpts = [c for c in all_cpt_codes if c.get("patient") == "Aarav Sen"]
     priya_cpts = [c for c in all_cpt_codes if c.get("patient") == "Priya Sen"]
@@ -133,7 +124,6 @@ def run_code_lookup_agent(state: dict) -> dict:
     if not priya_icds:
         validation_errors.append("MISSING: No ICD-10 codes for Priya")
 
-    # Check CPT 29888 and 29881 are present for Aarav
     aarav_cpt_codes = [c["cpt_code"] for c in aarav_cpts]
     if "29888" not in aarav_cpt_codes:
         validation_errors.append("MISSING: CPT 29888 (ACL Reconstruction) for Aarav")
@@ -199,7 +189,6 @@ Return ONLY valid JSON array."""
         return codes if isinstance(codes, list) else []
     except Exception as e:
         print(f"  [WARN]  LLM CPT inference failed")
-        # Deterministic fallback
         return [
             {
                 "cpt_code": "97161",

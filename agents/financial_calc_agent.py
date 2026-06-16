@@ -15,7 +15,6 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
-# ── In-network allowed amounts by plan ──────────────────────
 PLAN_A_ALLOWED = {
     "29888": 320000,   # ACL Reconstruction
     "29881": 90000,    # Meniscectomy
@@ -45,73 +44,51 @@ def run_financial_calc_agent(state: dict) -> dict:
     ben_a = plan_a.get("benefits", {})
     ben_b = plan_b.get("benefits", {})
 
-    # ════════════════════════════════════════════════════════
-    # AARAV'S SURGERY — ACL Reconstruction + Meniscectomy
-    # Primary: Plan B (Insurer2) | Secondary: Plan A (Insurer1)
-    # ════════════════════════════════════════════════════════
     print("  [CALC] Calculating Aarav's surgery costs (Primary: Plan B, Secondary: Plan A)...")
 
-    # ── Plan B (Primary) — Aarav's deductible: ₹25,000 (none met YTD) ──
     plan_b_deductible_aarav = ben_b["annual_deductible_individual"]
     plan_b_deductible_met_aarav = ben_b.get("deductible_met_aarav", 0)
     plan_b_deductible_remaining = max(0, plan_b_deductible_aarav - plan_b_deductible_met_aarav)
 
-    # Allowed amounts under Plan B
     allowed_29888_b = PLAN_B_ALLOWED["29888"]   # ₹3,30,000
     allowed_29881_b = PLAN_B_ALLOWED["29881"]   # ₹92,000
     total_allowed_b = allowed_29888_b + allowed_29881_b  # ₹4,22,000
 
-    # Apply Plan B deductible
     plan_b_deductible_applied = min(plan_b_deductible_remaining, total_allowed_b)
     after_deductible_b = total_allowed_b - plan_b_deductible_applied
 
-    # Plan B coinsurance (75% plan, 25% member)
     plan_b_pays_coinsurance = round(after_deductible_b * ben_b["coinsurance_plan_pays"], 2)
     plan_b_member_coinsurance = round(after_deductible_b * ben_b["coinsurance_member_pays"], 2)
 
-    # Plan B total obligation
     plan_b_total_pays = plan_b_pays_coinsurance
     plan_b_member_oop_primary = plan_b_deductible_applied + plan_b_member_coinsurance
 
-    # ── Plan A (Secondary) — Aarav's deductible on Plan A ──
     plan_a_deductible_aarav = ben_a["annual_deductible_individual"]
     plan_a_deductible_met_aarav = ben_a.get("deductible_met_aarav", 0)
     plan_a_deductible_remaining = max(0, plan_a_deductible_aarav - plan_a_deductible_met_aarav)
 
-    # Allowed amounts under Plan A
     allowed_29888_a = PLAN_A_ALLOWED["29888"]   # ₹3,20,000
     allowed_29881_a = PLAN_A_ALLOWED["29881"]   # ₹90,000
     total_allowed_a = allowed_29888_a + allowed_29881_a  # ₹4,10,000
 
-    # Secondary calculates on its own allowed amounts minus what primary already paid
-    # Non-duplication: secondary won't pay more than it would if it were primary
     primary_paid_plan_b = plan_b_total_pays
 
-    # Secondary (Plan A) applies to whatever balance remains up to Plan A's allowed amount
-    # Plan A sees the claim at its contracted rate, credits the primary payment
     plan_a_secondary_allowed = total_allowed_a  # Plan A's view of total allowed
 
-    # Apply Plan A secondary deductible
     plan_a_deductible_applied_secondary = min(plan_a_deductible_remaining, plan_a_secondary_allowed)
     after_deductible_a_secondary = plan_a_secondary_allowed - plan_a_deductible_applied_secondary
 
-    # Plan A would pay (if primary): 80% of after-deductible
     plan_a_hypothetical_primary_pay = round(after_deductible_a_secondary * ben_a["coinsurance_plan_pays"], 2)
 
-    # Secondary credit: Plan A pays the LESSER of:
-    #   (a) what it would pay as primary, OR
-    #   (b) actual remaining balance after Plan B paid
     billed_total_aarav = parsed.get("surgeon_estimate", {}).get("total_estimated_charge", 450000)
     remaining_after_primary = max(0, billed_total_aarav - plan_b_total_pays)
 
     plan_a_secondary_pays = min(plan_a_hypothetical_primary_pay, remaining_after_primary)
     plan_a_secondary_pays = round(plan_a_secondary_pays, 2)
 
-    # Aarav's final OOP
     aarav_oop = round(billed_total_aarav - plan_b_total_pays - plan_a_secondary_pays, 2)
     aarav_oop = max(0, aarav_oop)
 
-    # Single-plan OOP (if only Plan B) for savings calculation
     single_plan_b_oop_aarav = round(billed_total_aarav - plan_b_total_pays, 2)
     aarav_savings = round(single_plan_b_oop_aarav - aarav_oop, 2)
 
@@ -155,22 +132,15 @@ def run_financial_calc_agent(state: dict) -> dict:
         }
     }
 
-    # ════════════════════════════════════════════════════════
-    # PRIYA'S PT BILLS — Physical Therapy
-    # Primary: Plan A (Insurer1) | Secondary: Plan B (Insurer2)
-    # ════════════════════════════════════════════════════════
     print("  [CALC] Calculating Priya's PT costs (Primary: Plan A, Secondary: Plan B)...")
 
     billed_total_priya = parsed.get("pt_invoice", {}).get("total_amount", 30000)
 
-    # Priya's PT breakdown: 1x Eval (97161 @ ₹5,000) + 5x Exercise (97110 @ ₹5,000 each)
-    # Plan A allowed rates:
     allowed_97161_a = PLAN_A_ALLOWED["97161"]    # ₹3,500
     allowed_97110_a_per = PLAN_A_ALLOWED["97110"] # ₹3,000 per session
     allowed_97110_a = allowed_97110_a_per * 5     # 5 sessions = ₹15,000
     total_allowed_priya_a = allowed_97161_a + allowed_97110_a  # ₹18,500
 
-    # Plan A — Primary for Priya
     plan_a_deductible_priya = ben_a["annual_deductible_individual"]
     plan_a_deductible_met_priya = ben_a.get("deductible_met_priya", 8000)  # ₹8,000 already met
     plan_a_deductible_remaining_priya = max(0, plan_a_deductible_priya - plan_a_deductible_met_priya)
@@ -180,12 +150,10 @@ def run_financial_calc_agent(state: dict) -> dict:
     plan_a_pays_priya = round(after_deductible_a_priya * ben_a["coinsurance_plan_pays"], 2)
     plan_a_member_priya = plan_a_deductible_applied_priya + round(after_deductible_a_priya * ben_a["coinsurance_member_pays"], 2)
 
-    # Plan B — Secondary for Priya
     plan_b_deductible_priya = ben_b["annual_deductible_individual"]
     plan_b_deductible_met_priya = ben_b.get("deductible_met_priya", 5000)  # ₹5,000 already met
     plan_b_deductible_remaining_priya = max(0, plan_b_deductible_priya - plan_b_deductible_met_priya)
 
-    # Plan B allowed rates
     allowed_97161_b = PLAN_B_ALLOWED["97161"]
     allowed_97110_b = PLAN_B_ALLOWED["97110"] * 5
     total_allowed_priya_b = allowed_97161_b + allowed_97110_b  # ₹19,800
@@ -241,9 +209,6 @@ def run_financial_calc_agent(state: dict) -> dict:
         }
     }
 
-    # ════════════════════════════════════════════════════════
-    # COMBINED FAMILY SUMMARY
-    # ════════════════════════════════════════════════════════
     total_billed = billed_total_aarav + billed_total_priya
     total_insurance = round(plan_b_total_pays + plan_a_secondary_pays + plan_a_pays_priya + plan_b_secondary_pays_priya, 2)
     total_oop = round(aarav_oop + priya_oop, 2)

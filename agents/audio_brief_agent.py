@@ -44,7 +44,6 @@ def run_audio_brief_agent(state: dict) -> dict:
     savings = fmt(family.get("total_savings_from_dual_coverage", 0))
     coverage_pct = family.get("coverage_percentage", 0)
 
-    # ── Generate Patient-Friendly Script ──────────────────────
     script = f"""
 Hello, Aarav and Priya. This is your DuCO Agent financial briefing for your insurance claim coordination.
 
@@ -95,11 +94,9 @@ This has been your DuCO Agent briefing. Good luck with the surgery, Aarav!
     audio_path = os.path.join(output_dir, "audio_brief.mp3")
     script_path = os.path.join(output_dir, "audio_brief_script.txt")
 
-    # Save text script
     with open(script_path, "w", encoding="utf-8") as f:
         f.write(script)
 
-    # Generate audio
     if GTTS_AVAILABLE:
         try:
             tts = gTTS(text=script, lang="en", slow=False, tld="co.in")

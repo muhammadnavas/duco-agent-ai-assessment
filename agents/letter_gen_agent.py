@@ -45,7 +45,6 @@ def run_letter_gen_agent(state: dict) -> dict:
     output_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "outputs")
     os.makedirs(output_dir, exist_ok=True)
 
-    # Gather clinical data
     mri = parsed.get("mri_report", {})
     surgeon = parsed.get("surgeon_estimate", {})
 
@@ -84,7 +83,6 @@ def run_letter_gen_agent(state: dict) -> dict:
         "date": date.today().strftime("%d-%B-%Y"),
     }
 
-    # ── Generate Plan A Letter (Insurer1) ──────────────────────
     print("  [WRITE] Generating pre-auth letter for Plan A (Insurer1)...")
     letter_a_path = _generate_preauth_pdf(
         letter_data=letter_data,
@@ -99,7 +97,6 @@ def run_letter_gen_agent(state: dict) -> dict:
     )
     messages.append(f"[OK] Pre-auth letter generated for Plan A: {letter_a_path}")
 
-    # ── Generate Plan B Letter (Insurer2) ──────────────────────
     print("  [WRITE] Generating pre-auth letter for Plan B (Insurer2)...")
     letter_b_path = _generate_preauth_pdf(
         letter_data=letter_data,
@@ -149,7 +146,6 @@ def _generate_preauth_pdf(
     styles = getSampleStyleSheet()
     story = []
 
-    # ── Header ──
     h1 = ParagraphStyle("H1", fontSize=13, fontName="Helvetica-Bold",
                         textColor=colors.HexColor("#1a3a5c"), alignment=TA_CENTER, spaceAfter=2)
     h2 = ParagraphStyle("H2", fontSize=10, fontName="Helvetica",
@@ -166,13 +162,11 @@ def _generate_preauth_pdf(
     story.append(HRFlowable(width="100%", thickness=2, color=colors.HexColor("#1a3a5c")))
     story.append(Spacer(1, 10))
 
-    # ── Date & Address ──
     story.append(Paragraph(f"Date: {letter_data['date']}", label))
     for line in insurer_address.split("\n"):
         story.append(Paragraph(line, body))
     story.append(Spacer(1, 10))
 
-    # ── Subject ──
     story.append(Paragraph(
         f"<b>RE: Pre-Authorization Request — Elective Orthopaedic Surgery</b><br/>"
         f"Patient: {letter_data['patient']['name']} | Member ID: {member_id} | Role: {member_role}<br/>"
@@ -182,7 +176,6 @@ def _generate_preauth_pdf(
     story.append(HRFlowable(width="100%", thickness=0.5, color=colors.HexColor("#aaa")))
     story.append(Spacer(1, 8))
 
-    # ── Patient Information ──
     story.append(Paragraph("PATIENT INFORMATION", bold))
     pat_data = [
         ["Full Name:", letter_data["patient"]["name"], "Date of Birth:", letter_data["patient"]["dob"]],
@@ -203,7 +196,6 @@ def _generate_preauth_pdf(
     story.append(pat_table)
     story.append(Spacer(1, 10))
 
-    # ── Clinical Indication ──
     story.append(Paragraph("CLINICAL INDICATION / DIAGNOSIS", bold))
     story.append(Paragraph(
         f"Mr. {letter_data['patient']['name']} sustained a sports injury resulting in a <b>complete tear of the "
@@ -216,7 +208,6 @@ def _generate_preauth_pdf(
         body
     ))
 
-    # ICD-10 table
     icd_header = [["ICD-10 Code", "Diagnosis Description"]]
     icd_rows = [[d["code"], d["desc"]] for d in letter_data["diagnoses"]]
     icd_table = Table(icd_header + icd_rows, colWidths=[4*cm, 14.5*cm])
@@ -234,7 +225,6 @@ def _generate_preauth_pdf(
     story.append(icd_table)
     story.append(Spacer(1, 10))
 
-    # ── Requested Procedures ──
     story.append(Paragraph("REQUESTED PROCEDURES / CPT CODES", bold))
     proc_header = [["CPT Code", "Procedure Description", "Estimated Charge (INR)"]]
     proc_rows = [[p["cpt"], p["desc"], f"₹{p['charge']:,.0f}"] for p in letter_data["procedures"]]
@@ -257,7 +247,6 @@ def _generate_preauth_pdf(
     story.append(proc_table)
     story.append(Spacer(1, 10))
 
-    # ── Clinical Justification ──
     story.append(Paragraph("CLINICAL JUSTIFICATION FOR MEDICAL NECESSITY", bold))
     story.append(Paragraph(
         "1. <b>ACL Reconstruction (CPT 29888):</b> Complete ACL tear confirmed by MRI (Grade: Complete). "
@@ -276,7 +265,6 @@ def _generate_preauth_pdf(
         body
     ))
 
-    # ── Requesting Physician ──
     story.append(Spacer(1, 10))
     story.append(HRFlowable(width="100%", thickness=0.5, color=colors.HexColor("#aaa")))
     story.append(Paragraph("REQUESTING PHYSICIAN / SURGEON", bold))

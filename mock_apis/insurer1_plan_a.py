@@ -11,9 +11,6 @@ import uvicorn
 
 app = FastAPI(title="Insurer1 Plan A API", version="1.0.0")
 
-# ────────────────────────────────────────────────────────────
-# Plan A — Master Benefits Configuration
-# ────────────────────────────────────────────────────────────
 PLAN_A_CONFIG = {
     "plan_id": "INSURER1-PLAN-A-2026",
     "insurer": "Insurer1 Health Insurance Ltd.",
@@ -67,7 +64,6 @@ PLAN_A_CONFIG = {
     },
 }
 
-# CPT-level allowed amounts (Plan A in-network contracted rates)
 PLAN_A_ALLOWED_AMOUNTS = {
     "29888": 320000,   # ACL Reconstruction — contracted rate INR 3,20,000
     "29881": 90000,    # Meniscectomy — contracted rate INR 90,000
@@ -76,9 +72,6 @@ PLAN_A_ALLOWED_AMOUNTS = {
 }
 
 
-# ────────────────────────────────────────────────────────────
-# Endpoints
-# ────────────────────────────────────────────────────────────
 
 @app.get("/plan", summary="Get full Plan A configuration")
 def get_plan():
@@ -142,9 +135,7 @@ def calculate_claim(req: ClaimRequest):
         billed_for_cpt = PLAN_A_ALLOWED_AMOUNTS.get(cpt, req.billed_amount)
 
         if req.is_secondary:
-            # COB Secondary: pay only what's left after primary paid
             remaining = max(0, billed_for_cpt - (req.primary_paid or 0))
-            # Apply secondary deductible
             if req.member_id == PLAN_A_CONFIG["primary_holder"]["member_id"]:
                 ded_remaining = max(0, benefits["annual_deductible_individual"] - benefits["deductible_met_priya"])
             else:
@@ -154,7 +145,6 @@ def calculate_claim(req: ClaimRequest):
             plan_pays = round(after_ded * benefits["coinsurance_plan_pays"], 2)
             member_pays = round(remaining - plan_pays, 2)
         else:
-            # Primary: apply deductible first
             if req.member_id == PLAN_A_CONFIG["primary_holder"]["member_id"]:
                 ded_remaining = max(0, benefits["annual_deductible_individual"] - benefits["deductible_met_priya"])
             else:

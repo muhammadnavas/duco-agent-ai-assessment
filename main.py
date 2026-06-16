@@ -75,7 +75,6 @@ def run_pipeline():
     """Execute the full DuCO-Agent LangGraph pipeline."""
     from graph.duco_graph import compile_graph
 
-    # ── Initial State ──────────────────────────────────────────
     base_dir = os.path.dirname(os.path.abspath(__file__))
     inputs_dir = os.path.join(base_dir, "mock_inputs")
 
@@ -120,7 +119,6 @@ def run_pipeline():
     graph = compile_graph()
     console.print("[green]OK Graph compiled[/green]\n")
 
-    # ── Execute ────────────────────────────────────────────────
     console.rule("[bold blue]Pipeline Execution[/bold blue]")
     start_time = time.time()
 
@@ -146,7 +144,6 @@ def print_results(state: dict):
     financial = state.get("financial_breakdown", {})
     family = financial.get("family_summary", {})
 
-    # -- Financial Summary Table --------------------------------
     table = Table(title="Financial Summary - Sen Family", box=box.ROUNDED,
                   border_style="blue", show_header=True, header_style="bold cyan")
     table.add_column("Category", style="dim", width=35)
@@ -167,7 +164,6 @@ def print_results(state: dict):
     console.print(f"  Aarav's Surgery: [green]Primary -> Plan B (Insurer2)[/green] | [blue]Secondary -> Plan A (Insurer1)[/blue]")
     console.print(f"  Priya's PT:      [blue]Primary -> Plan A (Insurer1)[/blue] | [green]Secondary -> Plan B (Insurer2)[/green]")
 
-    # ── Outputs ───────────────────────────────────────────────
     console.print("\n[bold cyan]Generated Outputs[/bold cyan]")
     outputs_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "outputs")
     for fname in ["duco_report.html", "preauth_letter_plan_a.pdf", "preauth_letter_plan_b.pdf", "audio_brief.mp3", "audio_brief_script.txt"]:
@@ -178,7 +174,6 @@ def print_results(state: dict):
         else:
             console.print(f"  [yellow]WARN[/yellow]  {fname} [dim](not generated)[/dim]")
 
-    # ── Messages ──────────────────────────────────────────────
     console.print("\n[bold cyan]Agent Messages[/bold cyan]")
     for msg in state.get("messages", [])[-10:]:  # Last 10
         console.print(f"  {msg}")
@@ -211,7 +206,6 @@ def main():
         console.print("[green]Setup complete.[/green]")
         return
 
-    # Run the full pipeline
     final_state = run_pipeline()
 
     if final_state:

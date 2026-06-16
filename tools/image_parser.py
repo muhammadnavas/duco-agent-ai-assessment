@@ -90,14 +90,12 @@ Return ONLY valid JSON, no markdown formatting."""
     ])
 
     raw_text = response.text.strip()
-    # Clean markdown code blocks if present
     raw_text = re.sub(r"```json\s*", "", raw_text)
     raw_text = re.sub(r"```\s*", "", raw_text)
 
     try:
         result = json.loads(raw_text)
     except json.JSONDecodeError:
-        # Fallback: return structured mock data if parsing fails
         result = {
             "clinic_name": "HealthFirst Physical Therapy Clinic, Mumbai",
             "patient_name": "Priya Sen",
@@ -192,7 +190,6 @@ Return ONLY valid JSON, no markdown formatting."""
     try:
         result = json.loads(raw_text)
     except json.JSONDecodeError:
-        # Fallback mock data
         result = {
             "surgeon_name": "Dr. Arjun Mehta, MS Orthopaedics",
             "hospital_facility": "Apollo Hospitals, Mumbai",

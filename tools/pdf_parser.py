@@ -33,10 +33,8 @@ def parse_mri_report(pdf_path: str) -> dict:
     Parse an MRI radiology report PDF.
     Extracts patient info, findings, diagnoses, and clinical codes.
     """
-    # First extract raw text
     raw_text = extract_text_from_pdf(pdf_path)
 
-    # Then use Gemini to structure the clinical content
     model_name = get_available_model("GEMINI_MODEL", "gemini-2.5-flash")
     model = genai.GenerativeModel(model_name)
 
@@ -103,7 +101,6 @@ Return ONLY valid JSON, no markdown."""
     try:
         result = json.loads(raw_response)
     except json.JSONDecodeError:
-        # Fallback structured data based on known MRI content
         result = {
             "patient_name": "Aarav Sen",
             "patient_id": "APOL-MUM-2026-04872",
