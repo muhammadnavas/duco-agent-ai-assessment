@@ -1,11 +1,4 @@
-"""
-agents/letter_gen_agent.py
---------------------------
-STEP 6: Pre-Authorization Letter Generation Agent
-Generates clinically sound, professional pre-authorization request letters
-for both Plan A and Plan B for Aarav's ACL surgery.
-Letters are generated as both HTML and PDF.
-"""
+"""Pre-Authorization Letter Generation Agent creating clinically sound PDF letters."""
 import os
 import sys
 import json
@@ -27,19 +20,10 @@ genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
 
 def run_letter_gen_agent(state: dict) -> dict:
-    """
-    Letter Generation Agent:
-    - Generates pre-auth letter for Plan A (Insurer1) for CPT 29888 + 29881
-    - Generates pre-auth letter for Plan B (Insurer2) for CPT 29888 + 29881
-    - Output: PDF files + HTML strings
-    """
+    """Generates pre-auth PDF letters for Plan A and Plan B."""
     cpt_codes = state.get("cpt_codes", [])
     icd10_codes = state.get("icd10_codes", [])
     parsed = state.get("parsed_documents", {})
-    cob_aarav = state.get("cob_aarav", {})
-    financial = state.get("financial_breakdown", {})
-    plan_a = state.get("plan_a_data", {})
-    plan_b = state.get("plan_b_data", {})
     messages = []
 
     output_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "outputs")
@@ -56,9 +40,6 @@ def run_letter_gen_agent(state: dict) -> dict:
         "gender": "Male",
         "age": 38,
     }
-
-    surgical_codes = [c for c in cpt_codes if c.get("patient") == "Aarav Sen"]
-    aarav_icd10 = [i for i in icd10_codes if i.get("patient") == "Aarav Sen"]
 
     procedures = [
         {"cpt": "29888", "desc": "Arthroscopically aided anterior cruciate ligament (ACL) reconstruction", "charge": 350000},
@@ -133,7 +114,6 @@ def _generate_preauth_pdf(
     insurer_address: str,
 ) -> str:
     """Generate a professional pre-authorization request PDF letter."""
-
     doc = SimpleDocTemplate(
         output_path,
         pagesize=A4,
@@ -249,19 +229,13 @@ def _generate_preauth_pdf(
 
     story.append(Paragraph("CLINICAL JUSTIFICATION FOR MEDICAL NECESSITY", bold))
     story.append(Paragraph(
-        "1. <b>ACL Reconstruction (CPT 29888):</b> Complete ACL tear confirmed by MRI (Grade: Complete). "
-        "Patient presents with knee instability, inability to return to normal daily activities, and "
-        "functional limitation. ACL reconstruction is the gold-standard treatment for complete ACL tears "
-        "in active adults aged under 50 years, with demonstrated superiority over conservative management "
-        "in preventing long-term joint degeneration and restoring full functional capacity.",
+        "1. <b>ACL Reconstruction (CPT 29888):</b> Complete ACL tear confirmed by MRI. "
+        "Patient presents with knee instability and functional limitation.",
         body
     ))
     story.append(Paragraph(
-        "2. <b>Meniscectomy (CPT 29881):</b> Grade III complex tear of the medial meniscus "
-        "(posterior horn and body, 12mm extent) with meniscal extrusion of 3.5mm confirmed on MRI. "
-        "Concurrent arthroscopic partial meniscectomy during ACL reconstruction is clinically indicated "
-        "to prevent further cartilage damage, reduce pain, and restore joint mechanics. "
-        "Delaying meniscal treatment risks accelerated osteoarthritis progression.",
+        "2. <b>Meniscectomy (CPT 29881):</b> Grade III complex tear of the medial meniscus. "
+        "Concurrent arthroscopic partial meniscectomy during ACL reconstruction is clinically indicated.",
         body
     ))
 
@@ -288,10 +262,7 @@ def _generate_preauth_pdf(
 
     story.append(Spacer(1, 12))
     story.append(Paragraph(
-        "We respectfully request expedited review and approval of this pre-authorization request. "
-        "Please feel free to contact the requesting surgeon's office for any additional clinical "
-        "information required. Supporting documentation including the full MRI radiology report "
-        "and imaging can be provided upon request.",
+        "We respectfully request review and approval of this pre-authorization request.",
         body
     ))
     story.append(Spacer(1, 20))

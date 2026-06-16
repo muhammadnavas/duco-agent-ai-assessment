@@ -1,12 +1,4 @@
-"""
-agents/visual_output_agent.py
-------------------------------
-STEP 7: Visual Output Agent
-Generates:
-  1. Interactive cost flow Sankey diagram (Plotly)
-  2. Cost breakdown bar charts
-  3. Comprehensive HTML report with all results
-"""
+"""Visual Output Agent for generating Sankey diagrams and HTML reports."""
 import os
 import sys
 import json
@@ -23,12 +15,7 @@ except ImportError:
 
 
 def run_visual_output_agent(state: dict) -> dict:
-    """
-    Visual Output Agent:
-    - Creates an interactive Sankey flow diagram
-    - Creates cost breakdown charts
-    - Generates the comprehensive HTML report
-    """
+    """Generates the Sankey cost diagram and HTML report."""
     financial = state.get("financial_breakdown", {})
     cob_aarav = state.get("cob_aarav", {})
     cob_priya = state.get("cob_priya", {})

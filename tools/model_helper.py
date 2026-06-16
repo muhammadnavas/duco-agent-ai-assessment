@@ -1,21 +1,11 @@
-"""
-tools/model_helper.py
----------------------
-Helper functions to resolve and fallback to available Gemini models dynamically.
-"""
+"""Model helper utility for resolving Gemini models."""
 import os
 import google.generativeai as genai
 
 _AVAILABLE_MODELS = None
 
 def get_available_model(env_var_name: str, fallback_default: str = "gemini-2.5-flash") -> str:
-    """
-    Returns the best available Gemini model.
-    1. Checks the specified environment variable (e.g. GEMINI_MODEL).
-    2. Verifies if that model is supported by the user's API key/quota.
-    3. If not supported, finds the next best available model from the API.
-    4. Falls back to a default model if listing fails or no match is found.
-    """
+    """Get the best available Gemini model from environment or API list."""
     global _AVAILABLE_MODELS
     
     preferred_name = os.getenv(env_var_name)

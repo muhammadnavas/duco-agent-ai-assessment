@@ -1,9 +1,4 @@
-"""
-tools/pdf_parser.py
--------------------
-Parses medical PDF documents (MRI reports, clinical records) using PyMuPDF.
-Extracts text content and structured clinical information.
-"""
+"""Parses medical PDF documents (MRI reports) using PyMuPDF and Gemini."""
 import os
 import json
 import re
@@ -29,10 +24,7 @@ def extract_text_from_pdf(pdf_path: str) -> str:
 
 
 def parse_mri_report(pdf_path: str) -> dict:
-    """
-    Parse an MRI radiology report PDF.
-    Extracts patient info, findings, diagnoses, and clinical codes.
-    """
+    """Parse an MRI radiology report PDF."""
     raw_text = extract_text_from_pdf(pdf_path)
 
     model_name = get_available_model("GEMINI_MODEL", "gemini-2.5-flash")
@@ -242,8 +234,5 @@ if __name__ == "__main__":
     pdf_path = os.path.join(base, "mock_inputs", "aarav_mri_report.pdf")
 
     if os.path.exists(pdf_path):
-        print("=== Parsing MRI Report ===")
         result = parse_mri_report(pdf_path)
         print(json.dumps(result, indent=2, ensure_ascii=False))
-    else:
-        print(f"MRI PDF not found at {pdf_path}. Run generate_mri_pdf.py first.")

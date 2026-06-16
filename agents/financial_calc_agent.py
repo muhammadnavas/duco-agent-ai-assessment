@@ -1,43 +1,27 @@
-"""
-agents/financial_calc_agent.py
-------------------------------
-STEP 5: Financial Calculation Agent
-Performs precise COB financial calculations:
-  - Applies deductibles (primary plan first)
-  - Calculates coinsurance splits
-  - Applies secondary plan deductible to remaining balance
-  - Computes out-of-pocket totals
-  - Calculates savings vs. single-plan coverage
-All amounts in Indian Rupees (INR).
-"""
+"""Financial Calculation Agent performing Coordination of Benefits (COB) logic math."""
 import os
 import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 PLAN_A_ALLOWED = {
-    "29888": 320000,   # ACL Reconstruction
-    "29881": 90000,    # Meniscectomy
-    "97161": 3500,     # PT Evaluation
-    "97110": 3000,     # Therapeutic Exercise (per session)
+    "29888": 320000,
+    "29881": 90000,
+    "97161": 3500,
+    "97110": 3000,
 }
 PLAN_B_ALLOWED = {
-    "29888": 330000,   # ACL Reconstruction
-    "29881": 92000,    # Meniscectomy
-    "97161": 3800,     # PT Evaluation
-    "97110": 3200,     # Therapeutic Exercise (per session)
+    "29888": 330000,
+    "29881": 92000,
+    "97161": 3800,
+    "97110": 3200,
 }
 
 
 def run_financial_calc_agent(state: dict) -> dict:
-    """
-    Financial Calculation Agent:
-    Performs step-by-step COB financial math for both claims.
-    """
+    """Performs COB cost calculations for both claims under primary/secondary rules."""
     plan_a = state.get("plan_a_data", {})
     plan_b = state.get("plan_b_data", {})
-    cob_aarav = state.get("cob_aarav", {})
-    cob_priya = state.get("cob_priya", {})
     parsed = state.get("parsed_documents", {})
     messages = []
 
@@ -50,9 +34,9 @@ def run_financial_calc_agent(state: dict) -> dict:
     plan_b_deductible_met_aarav = ben_b.get("deductible_met_aarav", 0)
     plan_b_deductible_remaining = max(0, plan_b_deductible_aarav - plan_b_deductible_met_aarav)
 
-    allowed_29888_b = PLAN_B_ALLOWED["29888"]   # ₹3,30,000
-    allowed_29881_b = PLAN_B_ALLOWED["29881"]   # ₹92,000
-    total_allowed_b = allowed_29888_b + allowed_29881_b  # ₹4,22,000
+    allowed_29888_b = PLAN_B_ALLOWED["29888"]
+    allowed_29881_b = PLAN_B_ALLOWED["29881"]
+    total_allowed_b = allowed_29888_b + allowed_29881_b
 
     plan_b_deductible_applied = min(plan_b_deductible_remaining, total_allowed_b)
     after_deductible_b = total_allowed_b - plan_b_deductible_applied
@@ -67,13 +51,11 @@ def run_financial_calc_agent(state: dict) -> dict:
     plan_a_deductible_met_aarav = ben_a.get("deductible_met_aarav", 0)
     plan_a_deductible_remaining = max(0, plan_a_deductible_aarav - plan_a_deductible_met_aarav)
 
-    allowed_29888_a = PLAN_A_ALLOWED["29888"]   # ₹3,20,000
-    allowed_29881_a = PLAN_A_ALLOWED["29881"]   # ₹90,000
-    total_allowed_a = allowed_29888_a + allowed_29881_a  # ₹4,10,000
+    allowed_29888_a = PLAN_A_ALLOWED["29888"]
+    allowed_29881_a = PLAN_A_ALLOWED["29881"]
+    total_allowed_a = allowed_29888_a + allowed_29881_a
 
-    primary_paid_plan_b = plan_b_total_pays
-
-    plan_a_secondary_allowed = total_allowed_a  # Plan A's view of total allowed
+    plan_a_secondary_allowed = total_allowed_a
 
     plan_a_deductible_applied_secondary = min(plan_a_deductible_remaining, plan_a_secondary_allowed)
     after_deductible_a_secondary = plan_a_secondary_allowed - plan_a_deductible_applied_secondary
@@ -136,13 +118,13 @@ def run_financial_calc_agent(state: dict) -> dict:
 
     billed_total_priya = parsed.get("pt_invoice", {}).get("total_amount", 30000)
 
-    allowed_97161_a = PLAN_A_ALLOWED["97161"]    # ₹3,500
-    allowed_97110_a_per = PLAN_A_ALLOWED["97110"] # ₹3,000 per session
-    allowed_97110_a = allowed_97110_a_per * 5     # 5 sessions = ₹15,000
-    total_allowed_priya_a = allowed_97161_a + allowed_97110_a  # ₹18,500
+    allowed_97161_a = PLAN_A_ALLOWED["97161"]
+    allowed_97110_a_per = PLAN_A_ALLOWED["97110"]
+    allowed_97110_a = allowed_97110_a_per * 5
+    total_allowed_priya_a = allowed_97161_a + allowed_97110_a
 
     plan_a_deductible_priya = ben_a["annual_deductible_individual"]
-    plan_a_deductible_met_priya = ben_a.get("deductible_met_priya", 8000)  # ₹8,000 already met
+    plan_a_deductible_met_priya = ben_a.get("deductible_met_priya", 8000)
     plan_a_deductible_remaining_priya = max(0, plan_a_deductible_priya - plan_a_deductible_met_priya)
 
     plan_a_deductible_applied_priya = min(plan_a_deductible_remaining_priya, total_allowed_priya_a)
@@ -151,12 +133,12 @@ def run_financial_calc_agent(state: dict) -> dict:
     plan_a_member_priya = plan_a_deductible_applied_priya + round(after_deductible_a_priya * ben_a["coinsurance_member_pays"], 2)
 
     plan_b_deductible_priya = ben_b["annual_deductible_individual"]
-    plan_b_deductible_met_priya = ben_b.get("deductible_met_priya", 5000)  # ₹5,000 already met
+    plan_b_deductible_met_priya = ben_b.get("deductible_met_priya", 5000)
     plan_b_deductible_remaining_priya = max(0, plan_b_deductible_priya - plan_b_deductible_met_priya)
 
     allowed_97161_b = PLAN_B_ALLOWED["97161"]
     allowed_97110_b = PLAN_B_ALLOWED["97110"] * 5
-    total_allowed_priya_b = allowed_97161_b + allowed_97110_b  # ₹19,800
+    total_allowed_priya_b = allowed_97161_b + allowed_97110_b
 
     plan_b_deductible_applied_priya = min(plan_b_deductible_remaining_priya, total_allowed_priya_b)
     after_deductible_b_priya = total_allowed_priya_b - plan_b_deductible_applied_priya
@@ -229,13 +211,11 @@ def run_financial_calc_agent(state: dict) -> dict:
     }
 
     print(f"  [OK] Total billed: INR {total_billed:,.0f}")
-    print(f"  [OK] Insurance covers: INR {total_insurance:,.0f} ({financial_breakdown['family_summary']['coverage_percentage']}%)")
     print(f"  [OK] Family OOP: INR {total_oop:,.0f}")
-    print(f"  [OK] Savings from dual coverage: INR {total_savings:,.0f}")
 
-    messages.append(f"[OK] Aarav OOP: INR {aarav_oop:,.2f} (saved INR {aarav_savings:,.2f} from dual coverage)")
-    messages.append(f"[OK] Priya OOP: INR {priya_oop:,.2f} (saved INR {priya_savings:,.2f} from dual coverage)")
-    messages.append(f"[OK] Family total OOP: INR {total_oop:,.2f} on INR {total_billed:,.0f} in bills")
+    messages.append(f"[OK] Aarav OOP: INR {aarav_oop:,.2f}")
+    messages.append(f"[OK] Priya OOP: INR {priya_oop:,.2f}")
+    messages.append(f"[OK] Family total OOP: INR {total_oop:,.2f}")
 
     return {
         "financial_breakdown": financial_breakdown,

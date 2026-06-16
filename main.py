@@ -1,14 +1,4 @@
-"""
-main.py
---------
-DuCO-Agent Main Entry Point
-Orchestrates the full LangGraph pipeline for Coordination of Benefits processing.
-
-Usage:
-    python main.py
-    python main.py --setup   (generates mock input files first)
-    python main.py --graph   (shows LangGraph structure and exits)
-"""
+"""DuCO-Agent Main Entry Point orchestrating Coordination of Benefits (COB) processing."""
 import os
 import sys
 import json
@@ -153,7 +143,7 @@ def print_results(state: dict):
     table.add_row("Insurance Covers (Both Plans)", f"INR {family.get('total_covered_by_insurance', 0):,.2f}",)
     table.add_row("Plan B (Insurer2) Total Pays", f"INR {family.get('plan_b_total_pays', 0):,.2f}")
     table.add_row("Plan A (Insurer1) Total Pays", f"INR {family.get('plan_a_total_pays', 0):,.2f}")
-    table.add_row("", "")  # spacer
+    table.add_row("", "")
     table.add_row("[bold red]Family Out-of-Pocket (OOP)", f"[bold red]INR {family.get('total_family_oop', 0):,.2f}")
     table.add_row("[green]Savings from Dual Coverage", f"[green]INR {family.get('total_savings_from_dual_coverage', 0):,.2f}")
     table.add_row("Coverage Percentage", f"{family.get('coverage_percentage', 0):.1f}%")
@@ -175,7 +165,7 @@ def print_results(state: dict):
             console.print(f"  [yellow]WARN[/yellow]  {fname} [dim](not generated)[/dim]")
 
     console.print("\n[bold cyan]Agent Messages[/bold cyan]")
-    for msg in state.get("messages", [])[-10:]:  # Last 10
+    for msg in state.get("messages", [])[-10:]:
         console.print(f"  {msg}")
 
     console.print("\n[bold green]DuCO-Agent completed successfully![/bold green]")

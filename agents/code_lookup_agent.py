@@ -1,11 +1,4 @@
-"""
-agents/code_lookup_agent.py
----------------------------
-STEP 2: Code Lookup Agent
-Infers or validates CPT and ICD-10 codes from parsed clinical descriptions.
-Uses both keyword-based lookup (cpt_icd_mapper) and Gemini LLM for reasoning.
-Includes a reflection/validation loop.
-"""
+"""Code Lookup Agent for resolving CPT and ICD-10 codes from clinical text."""
 import os
 import sys
 import json
@@ -21,14 +14,7 @@ genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
 
 def run_code_lookup_agent(state: dict) -> dict:
-    """
-    Code Lookup Agent:
-    1. For PT invoice: infer CPT codes from clinical description (no codes present)
-    2. For surgeon estimate: validate/confirm existing CPT codes
-    3. For MRI report: confirm ICD-10 codes
-    4. Validate all codes for completeness
-    5. Apply reflection if validation fails
-    """
+    """Validate and resolve CPT and ICD-10 codes."""
     parsed = state.get("parsed_documents", {})
     retry_count = state.get("retry_count", 0)
     messages = []

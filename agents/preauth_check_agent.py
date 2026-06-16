@@ -1,10 +1,4 @@
-"""
-agents/preauth_check_agent.py
------------------------------
-STEP 3: Pre-Authorization Check Agent
-Determines which CPT codes require pre-authorization from each insurance plan.
-Queries both mock Plan A and Plan B APIs.
-"""
+"""Pre-Authorization Check Agent determining CPT authorization requirements."""
 import os
 import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -18,12 +12,7 @@ PLAN_B_PREAUTH_CODES = set(PLAN_B_CONFIG["coverage"]["pre_authorization_required
 
 
 def run_preauth_check_agent(state: dict) -> dict:
-    """
-    Pre-Auth Check Agent:
-    - Check each CPT code against both Plan A and Plan B's pre-auth requirements
-    - Determine overall pre-auth status
-    - Flag which procedures need letters before claims can be submitted
-    """
+    """Checks each CPT code against plan requirements to flag needed pre-auths."""
     cpt_codes = state.get("cpt_codes", [])
     messages = []
     preauth_required = {}

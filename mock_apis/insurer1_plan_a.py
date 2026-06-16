@@ -1,9 +1,4 @@
-"""
-Mock Insurance API — Insurer1 (Plan A)
-Priya Sen is the Primary Policyholder; Aarav Sen is the Dependent.
-
-FastAPI server exposing Plan A benefit details and COB endpoints.
-"""
+"""Mock Insurance API — Insurer1 (Plan A)"""
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import Optional
@@ -33,25 +28,25 @@ PLAN_A_CONFIG = {
         "relationship": "Spouse",
     },
     "benefits": {
-        "annual_deductible_individual": 20000,       # INR
-        "annual_deductible_family": 40000,           # INR
-        "deductible_met_priya": 8000,                # YTD already met by Priya
-        "deductible_met_aarav": 0,                   # YTD met by Aarav as dependent
-        "coinsurance_plan_pays": 0.80,               # Plan pays 80% after deductible
-        "coinsurance_member_pays": 0.20,             # Member pays 20%
-        "out_of_pocket_max_individual": 200000,      # INR
-        "out_of_pocket_max_family": 400000,          # INR
+        "annual_deductible_individual": 20000,
+        "annual_deductible_family": 40000,
+        "deductible_met_priya": 8000,
+        "deductible_met_aarav": 0,
+        "coinsurance_plan_pays": 0.80,
+        "coinsurance_member_pays": 0.20,
+        "out_of_pocket_max_individual": 200000,
+        "out_of_pocket_max_family": 400000,
         "oop_met_priya": 8000,
         "oop_met_aarav": 0,
-        "copay_pcp": 500,                            # INR
-        "copay_specialist": 1000,                    # INR
-        "lifetime_maximum": None,                    # No lifetime max
+        "copay_pcp": 500,
+        "copay_specialist": 1000,
+        "lifetime_maximum": None,
     },
     "coverage": {
         "surgical_procedures": True,
         "physical_therapy": True,
         "pt_visits_per_year": 30,
-        "pt_visits_used": 5,                         # Priya has used 5 PT visits
+        "pt_visits_used": 5,
         "diagnostic_imaging": True,
         "prescription_drugs": True,
         "pre_authorization_required": ["29888", "29881", "27447", "22612"],
@@ -59,18 +54,17 @@ PLAN_A_CONFIG = {
     },
     "cob_coordination": {
         "cob_type": "Standard",
-        "coordination_method": "Non-Duplication",   # Won't pay more than primary
+        "coordination_method": "Non-Duplication",
         "birthday_rule_applies": True,
     },
 }
 
 PLAN_A_ALLOWED_AMOUNTS = {
-    "29888": 320000,   # ACL Reconstruction — contracted rate INR 3,20,000
-    "29881": 90000,    # Meniscectomy — contracted rate INR 90,000
-    "97161": 3500,     # PT Evaluation — contracted rate INR 3,500
-    "97110": 3000,     # Therapeutic Exercise (per session) — contracted rate INR 3,000
+    "29888": 320000,
+    "29881": 90000,
+    "97161": 3500,
+    "97110": 3000,
 }
-
 
 
 @app.get("/plan", summary="Get full Plan A configuration")
