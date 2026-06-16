@@ -1,7 +1,4 @@
-"""
-Script to generate mock_inputs/aarav_mri_report.pdf
-Run once to create the mock PDF input.
-"""
+"""Script to generate mock_inputs/aarav_mri_report.pdf."""
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import mm, cm

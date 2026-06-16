@@ -1,10 +1,4 @@
-"""
-agents/audio_brief_agent.py
-----------------------------
-STEP 8: Audio Brief Agent
-Generates a patient-friendly audio summary of the COB results.
-Uses Google Text-to-Speech (gTTS) to create an MP3 file.
-"""
+"""Generates a patient-friendly audio summary of the COB results using gTTS."""
 import os
 import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -17,16 +11,8 @@ except ImportError:
 
 
 def run_audio_brief_agent(state: dict) -> dict:
-    """
-    Audio Brief Agent:
-    - Generates a patient-friendly script summarizing the COB outcome
-    - Converts to MP3 using gTTS
-    - Returns the text and audio file path
-    """
+    """Generates a patient-friendly script and converts it to MP3."""
     financial = state.get("financial_breakdown", {})
-    cob_aarav = state.get("cob_aarav", {})
-    cob_priya = state.get("cob_priya", {})
-    preauth_letters = state.get("preauth_letters", {})
     messages = []
 
     family = financial.get("family_summary", {})

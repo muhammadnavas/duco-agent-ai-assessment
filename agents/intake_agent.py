@@ -1,13 +1,4 @@
-"""
-agents/intake_agent.py
-----------------------
-STEP 1: Intake Agent
-Ingests and parses all 4 multi-modal inputs:
-  1. priya_pt_invoice.png   → Vision (Gemini)
-  2. aarav_mri_report.pdf   → PDF text extraction
-  3. surgeon_estimate.jpg   → Vision (Gemini)
-  4. user_query.txt         → NLP parsing
-"""
+"""Intake Agent parsing inputs and loading plan configurations."""
 import os
 import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -19,10 +10,7 @@ from mock_apis.insurer2_plan_b import PLAN_B_CONFIG
 
 
 def run_intake_agent(state: dict) -> dict:
-    """
-    Intake Agent: Parses all input files and loads insurance plan configurations.
-    Returns updated state with parsed_documents and plan data.
-    """
+    """Parses input files and returns document structures."""
     raw_inputs = state.get("raw_inputs", {})
     base_dir = raw_inputs.get("base_dir", os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     inputs_dir = os.path.join(base_dir, "mock_inputs")
@@ -95,8 +83,8 @@ def run_intake_agent(state: dict) -> dict:
         parsed["user_query"] = _fallback_user_query()
         messages.append(f"[WARN]  User query not found, using mock data")
 
-    messages.append("[OK] Loaded Plan A (Insurer1) configuration — Priya primary, Aarav dependent")
-    messages.append("[OK] Loaded Plan B (Insurer2) configuration — Aarav primary, Priya dependent")
+    messages.append("[OK] Loaded Plan A (Insurer1) configuration")
+    messages.append("[OK] Loaded Plan B (Insurer2) configuration")
 
     print(f"  [OK] Intake complete: {len(parsed)} documents parsed, {len(errors)} errors")
 
@@ -109,7 +97,6 @@ def run_intake_agent(state: dict) -> dict:
         "current_step": "intake_complete",
         "retry_count": 0,
     }
-
 
 
 def _fallback_pt_invoice():

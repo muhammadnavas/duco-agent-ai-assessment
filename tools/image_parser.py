@@ -1,9 +1,4 @@
-"""
-tools/image_parser.py
----------------------
-Parses medical images (invoices, billing sheets) using Google Gemini Vision.
-Extracts structured data from scanned documents and photos.
-"""
+"""Parses medical images (invoices, estimates) using Google Gemini Vision."""
 import os
 import base64
 import json
@@ -37,10 +32,7 @@ def get_image_mime_type(image_path: str) -> str:
 
 
 def parse_pt_invoice(image_path: str) -> dict:
-    """
-    Parse a Physical Therapy invoice image using Gemini Vision.
-    Extracts patient info, dates, service descriptions, amounts, and any handwritten notes.
-    """
+    """Parse a Physical Therapy invoice image using Gemini Vision."""
     model_name = get_available_model("GEMINI_VISION_MODEL", "gemini-2.5-flash")
     model = genai.GenerativeModel(model_name)
     
@@ -137,10 +129,7 @@ Return ONLY valid JSON, no markdown formatting."""
 
 
 def parse_surgeon_estimate(image_path: str) -> dict:
-    """
-    Parse a surgeon's billing estimate image using Gemini Vision.
-    Extracts CPT codes, descriptions, and charges.
-    """
+    """Parse a surgeon's billing estimate image using Gemini Vision."""
     model_name = get_available_model("GEMINI_VISION_MODEL", "gemini-2.5-flash")
     model = genai.GenerativeModel(model_name)
     
@@ -225,13 +214,9 @@ Return ONLY valid JSON, no markdown formatting."""
 
 
 if __name__ == "__main__":
-    import sys
     base = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    
-    print("=== Parsing PT Invoice ===")
     pt_result = parse_pt_invoice(os.path.join(base, "mock_inputs", "priya_pt_invoice.png"))
     print(json.dumps(pt_result, indent=2, ensure_ascii=False))
 
-    print("\n=== Parsing Surgeon Estimate ===")
     surg_result = parse_surgeon_estimate(os.path.join(base, "mock_inputs", "surgeon_estimate.jpg"))
     print(json.dumps(surg_result, indent=2, ensure_ascii=False))

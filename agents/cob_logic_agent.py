@@ -1,13 +1,4 @@
-"""
-agents/cob_logic_agent.py
--------------------------
-STEP 4: Coordination of Benefits (COB) Logic Agent
-Determines primary and secondary payer for each claim using:
-  - Birthday Rule
-  - Subscriber vs. Dependent status
-  - Industry-standard COB guidelines (NAIC model)
-Uses Gemini LLM for complex reasoning and explanation.
-"""
+"""Coordination of Benefits (COB) Logic Agent applying subscriber/dependent rules."""
 import os
 import sys
 import json
@@ -49,15 +40,9 @@ COORDINATION OF BENEFITS (COB) RULES — STANDARD INDUSTRY GUIDELINES:
 
 
 def run_cob_logic_agent(state: dict) -> dict:
-    """
-    COB Logic Agent:
-    - Applies COB rules to determine primary/secondary payer for each claim
-    - Uses Gemini LLM for reasoning and explanation
-    - Returns structured COB determination for both Aarav and Priya
-    """
+    """Applies COB rules to determine primary/secondary payer for each claim."""
     plan_a = state.get("plan_a_data", {})
     plan_b = state.get("plan_b_data", {})
-    cpt_codes = state.get("cpt_codes", [])
     parsed = state.get("parsed_documents", {})
     messages = []
 
@@ -68,7 +53,6 @@ def run_cob_logic_agent(state: dict) -> dict:
 
     aarav_surgery_total = aarav_surgery.get("total_estimated_charge", 450000)
     priya_pt_total = priya_pt.get("total_amount", 30000)
-
 
     plan_a_id = plan_a.get("plan_id", "Plan A")
     plan_b_id = plan_b.get("plan_id", "Plan B")
@@ -92,7 +76,6 @@ def run_cob_logic_agent(state: dict) -> dict:
         },
         "cob_rule_applied": "Subscriber Rule: Plan where patient is primary policyholder pays first",
     }
-
 
     cob_priya = {
         "patient": "Priya Sen",

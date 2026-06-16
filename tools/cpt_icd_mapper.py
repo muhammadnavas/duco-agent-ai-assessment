@@ -1,9 +1,5 @@
-"""
-tools/cpt_icd_mapper.py
------------------------
-CPT and ICD-10 code lookup + inference tool.
-Used by the code_lookup_agent to map clinical descriptions to codes.
-"""
+"""CPT and ICD-10 code lookup database and matching helper functions."""
+
 from typing import Optional
 
 CPT_DATABASE = {
@@ -129,10 +125,7 @@ ICD10_DATABASE = {
 
 
 def lookup_cpt_by_description(description: str) -> list[dict]:
-    """
-    Fuzzy keyword match of a clinical description to CPT codes.
-    Returns list of matching CPT entries sorted by relevance.
-    """
+    """Match clinical description to CPT codes by keywords."""
     description_lower = description.lower()
     matches = []
 
@@ -140,7 +133,7 @@ def lookup_cpt_by_description(description: str) -> list[dict]:
         score = 0
         for kw in data["keywords"]:
             if kw.lower() in description_lower:
-                score += len(kw.split())  # longer keyword matches score higher
+                score += len(kw.split())
         if score > 0:
             matches.append({
                 "cpt_code": code,
@@ -156,10 +149,7 @@ def lookup_cpt_by_description(description: str) -> list[dict]:
 
 
 def lookup_icd10_by_description(description: str) -> list[dict]:
-    """
-    Fuzzy keyword match of a clinical description to ICD-10 codes.
-    Returns list of matching ICD-10 entries sorted by relevance.
-    """
+    """Match clinical description to ICD-10 codes by keywords."""
     description_lower = description.lower()
     matches = []
 
@@ -202,12 +192,10 @@ def requires_preauth(cpt_code: str) -> bool:
 
 
 if __name__ == "__main__":
-    print("=== CPT Lookup Test ===")
     results = lookup_cpt_by_description("Physical Therapy Evaluation and Therapeutic Exercise for back pain")
     for r in results:
         print(f"  {r['cpt_code']}: {r['description']} (score: {r['match_score']})")
 
-    print("\n=== ICD-10 Lookup Test ===")
     icd_results = lookup_icd10_by_description("chronic low back pain")
     for r in icd_results:
         print(f"  {r['icd10_code']}: {r['description']} (score: {r['match_score']})")

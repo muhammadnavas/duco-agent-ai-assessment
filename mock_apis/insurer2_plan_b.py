@@ -1,9 +1,4 @@
-"""
-Mock Insurance API — Insurer2 (Plan B)
-Aarav Sen is the Primary Policyholder; Priya Sen is the Dependent.
-
-FastAPI server exposing Plan B benefit details and COB endpoints.
-"""
+"""Mock Insurance API — Insurer2 (Plan B)"""
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import Optional
@@ -33,19 +28,19 @@ PLAN_B_CONFIG = {
         "relationship": "Spouse",
     },
     "benefits": {
-        "annual_deductible_individual": 25000,       # INR
-        "annual_deductible_family": 50000,           # INR
-        "deductible_met_aarav": 0,                   # YTD already met by Aarav
-        "deductible_met_priya": 5000,                # YTD met by Priya as dependent
-        "coinsurance_plan_pays": 0.75,               # Plan pays 75% after deductible
-        "coinsurance_member_pays": 0.25,             # Member pays 25%
-        "out_of_pocket_max_individual": 250000,      # INR
-        "out_of_pocket_max_family": 500000,          # INR
+        "annual_deductible_individual": 25000,
+        "annual_deductible_family": 50000,
+        "deductible_met_aarav": 0,
+        "deductible_met_priya": 5000,
+        "coinsurance_plan_pays": 0.75,
+        "coinsurance_member_pays": 0.25,
+        "out_of_pocket_max_individual": 250000,
+        "out_of_pocket_max_family": 500000,
         "oop_met_aarav": 0,
         "oop_met_priya": 5000,
-        "copay_pcp": 750,                            # INR
-        "copay_specialist": 1500,                   # INR
-        "lifetime_maximum": None,                    # No lifetime max
+        "copay_pcp": 750,
+        "copay_specialist": 1500,
+        "lifetime_maximum": None,
     },
     "coverage": {
         "surgical_procedures": True,
@@ -59,18 +54,17 @@ PLAN_B_CONFIG = {
     },
     "cob_coordination": {
         "cob_type": "Standard",
-        "coordination_method": "Maintenance-of-Benefits",  # Can pay up to plan benefits
+        "coordination_method": "Maintenance-of-Benefits",
         "birthday_rule_applies": True,
     },
 }
 
 PLAN_B_ALLOWED_AMOUNTS = {
-    "29888": 330000,   # ACL Reconstruction — contracted rate INR 3,30,000
-    "29881": 92000,    # Meniscectomy — contracted rate INR 92,000
-    "97161": 3800,     # PT Evaluation — contracted rate INR 3,800
-    "97110": 3200,     # Therapeutic Exercise (per session) — contracted rate INR 3,200
+    "29888": 330000,
+    "29881": 92000,
+    "97161": 3800,
+    "97110": 3200,
 }
-
 
 
 @app.get("/plan", summary="Get full Plan B configuration")
