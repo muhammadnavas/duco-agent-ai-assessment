@@ -85,7 +85,7 @@ def run_letter_gen_agent(state: dict) -> dict:
     }
 
     # ── Generate Plan A Letter (Insurer1) ──────────────────────
-    print("  📝 Generating pre-auth letter for Plan A (Insurer1)...")
+    print("  [WRITE] Generating pre-auth letter for Plan A (Insurer1)...")
     letter_a_path = _generate_preauth_pdf(
         letter_data=letter_data,
         plan_name="Insurer1 Health Insurance Ltd.",
@@ -97,10 +97,10 @@ def run_letter_gen_agent(state: dict) -> dict:
         output_path=os.path.join(output_dir, "preauth_letter_plan_a.pdf"),
         insurer_address="Insurer1 Health Insurance Ltd.\nPre-Authorization Department\n4th Floor, Insurance Tower\nBandra Kurla Complex, Mumbai — 400051",
     )
-    messages.append(f"✅ Pre-auth letter generated for Plan A: {letter_a_path}")
+    messages.append(f"[OK] Pre-auth letter generated for Plan A: {letter_a_path}")
 
     # ── Generate Plan B Letter (Insurer2) ──────────────────────
-    print("  📝 Generating pre-auth letter for Plan B (Insurer2)...")
+    print("  [WRITE] Generating pre-auth letter for Plan B (Insurer2)...")
     letter_b_path = _generate_preauth_pdf(
         letter_data=letter_data,
         plan_name="Insurer2 Assurance Corporation",
@@ -112,7 +112,7 @@ def run_letter_gen_agent(state: dict) -> dict:
         output_path=os.path.join(output_dir, "preauth_letter_plan_b.pdf"),
         insurer_address="Insurer2 Assurance Corporation\nMedical Authorization Unit\n12th Floor, Prestige Business Park\nLower Parel, Mumbai — 400013",
     )
-    messages.append(f"✅ Pre-auth letter generated for Plan B: {letter_b_path}")
+    messages.append(f"[OK] Pre-auth letter generated for Plan B: {letter_b_path}")
 
     return {
         "preauth_letters": {
@@ -313,5 +313,5 @@ def _generate_preauth_pdf(
     story.append(Paragraph(f"Date: {letter_data['date']}", body))
 
     doc.build(story)
-    print(f"  ✅ Pre-auth letter saved: {output_path}")
+    print(f"  [OK] Pre-auth letter saved: {output_path}")
     return output_path

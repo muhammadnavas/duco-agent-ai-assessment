@@ -83,56 +83,56 @@ class AgentState(TypedDict):
 
 def intake_node(state: AgentState) -> AgentState:
     """Ingest and parse all 4 multi-modal inputs."""
-    print("\n🔵 [DuCO-Agent] ── STEP 1: Intake Agent ──────────────────")
+    print("\n[STEP] [DuCO-Agent] ── STEP 1: Intake Agent ──────────────────")
     updates = run_intake_agent(state)
     return {**state, **updates}
 
 
 def code_lookup_node(state: AgentState) -> AgentState:
     """Look up / infer CPT and ICD-10 codes from clinical descriptions."""
-    print("\n🔵 [DuCO-Agent] ── STEP 2: Code Lookup Agent ─────────────")
+    print("\n[STEP] [DuCO-Agent] ── STEP 2: Code Lookup Agent ─────────────")
     updates = run_code_lookup_agent(state)
     return {**state, **updates}
 
 
 def preauth_check_node(state: AgentState) -> AgentState:
     """Determine pre-authorization requirements for each CPT code and plan."""
-    print("\n🔵 [DuCO-Agent] ── STEP 3: Pre-Auth Check Agent ──────────")
+    print("\n[STEP] [DuCO-Agent] ── STEP 3: Pre-Auth Check Agent ──────────")
     updates = run_preauth_check_agent(state)
     return {**state, **updates}
 
 
 def cob_logic_node(state: AgentState) -> AgentState:
     """Apply Coordination of Benefits rules to determine primary/secondary payer."""
-    print("\n🔵 [DuCO-Agent] ── STEP 4: COB Logic Agent ────────────────")
+    print("\n[STEP] [DuCO-Agent] ── STEP 4: COB Logic Agent ────────────────")
     updates = run_cob_logic_agent(state)
     return {**state, **updates}
 
 
 def financial_calc_node(state: AgentState) -> AgentState:
     """Calculate precise financial liability for each plan and patient."""
-    print("\n🔵 [DuCO-Agent] ── STEP 5: Financial Calculation Agent ───")
+    print("\n[STEP] [DuCO-Agent] ── STEP 5: Financial Calculation Agent ───")
     updates = run_financial_calc_agent(state)
     return {**state, **updates}
 
 
 def letter_gen_node(state: AgentState) -> AgentState:
     """Generate clinically sound pre-authorization letters for both plans."""
-    print("\n🔵 [DuCO-Agent] ── STEP 6: Letter Generation Agent ───────")
+    print("\n[STEP] [DuCO-Agent] ── STEP 6: Letter Generation Agent ───────")
     updates = run_letter_gen_agent(state)
     return {**state, **updates}
 
 
 def visual_output_node(state: AgentState) -> AgentState:
     """Generate visual cost flow chart and HTML report."""
-    print("\n🔵 [DuCO-Agent] ── STEP 7: Visual Output Agent ────────────")
+    print("\n[STEP] [DuCO-Agent] ── STEP 7: Visual Output Agent ────────────")
     updates = run_visual_output_agent(state)
     return {**state, **updates}
 
 
 def audio_brief_node(state: AgentState) -> AgentState:
     """Generate patient-friendly audio briefing."""
-    print("\n🔵 [DuCO-Agent] ── STEP 8: Audio Brief Agent ─────────────")
+    print("\n[STEP] [DuCO-Agent] ── STEP 8: Audio Brief Agent ─────────────")
     updates = run_audio_brief_agent(state)
     return {**state, **updates}
 
@@ -150,13 +150,13 @@ def should_retry_code_lookup(state: AgentState) -> str:
     retry_count = state.get("retry_count", 0)
 
     if errors and retry_count < 2:
-        print(f"\n⚠️  Code validation errors detected (retry {retry_count + 1}/2): {errors}")
+        print(f"\n[WARN]  Code validation errors detected (retry {retry_count + 1}/2): {errors}")
         return "retry_code_lookup"
     elif errors:
-        print(f"\n⚠️  Proceeding with warnings after {retry_count} retries.")
+        print(f"\n[WARN]  Proceeding with warnings after {retry_count} retries.")
         return "proceed_with_warnings"
     else:
-        print(f"\n✅ Code lookup validated successfully.")
+        print(f"\n[OK] Code lookup validated successfully.")
         return "proceed"
 
 
@@ -252,7 +252,7 @@ def print_graph_structure():
     try:
         print(graph.get_graph().draw_ascii())
     except Exception:
-        print("Nodes: intake → code_lookup → preauth_check → cob_logic → financial_calc → letter_gen → visual_output → audio_brief → END")
+        print("Nodes: intake -> code_lookup -> preauth_check -> cob_logic -> financial_calc -> letter_gen -> visual_output -> audio_brief -> END")
 
 
 if __name__ == "__main__":

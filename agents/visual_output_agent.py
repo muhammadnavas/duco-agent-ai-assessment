@@ -19,7 +19,7 @@ try:
     PLOTLY_AVAILABLE = True
 except ImportError:
     PLOTLY_AVAILABLE = False
-    print("  ⚠️  Plotly not available — using fallback HTML visualization")
+    print("  [WARN]  Plotly not available — using fallback HTML visualization")
 
 
 def run_visual_output_agent(state: dict) -> dict:
@@ -72,10 +72,10 @@ def run_visual_output_agent(state: dict) -> dict:
             aarav_plan_b, aarav_plan_a, aarav_oop,
             priya_plan_a, priya_plan_b, priya_oop
         )
-        messages.append("✅ Sankey cost flow diagram generated")
+        messages.append("[OK] Sankey cost flow diagram generated")
     else:
         cost_flow_html = "<p><em>Plotly not available — install with: pip install plotly kaleido</em></p>"
-        messages.append("⚠️  Sankey diagram skipped (plotly not installed)")
+        messages.append("[WARN]  Sankey diagram skipped (plotly not installed)")
 
     # ── 2. Generate HTML Report ────────────────────────────────
     html_path = os.path.join(output_dir, "duco_report.html")
@@ -95,8 +95,8 @@ def run_visual_output_agent(state: dict) -> dict:
     with open(html_path, "w", encoding="utf-8") as f:
         f.write(html_content)
 
-    print(f"  ✅ HTML report saved: {html_path}")
-    messages.append(f"✅ HTML report generated: {html_path}")
+    print(f"  [OK] HTML report saved: {html_path}")
+    messages.append(f"[OK] HTML report generated: {html_path}")
 
     return {
         "cost_flow_html": cost_flow_html,
@@ -412,9 +412,9 @@ def _generate_html_report(
   <p>Dual Coverage Optimization — Sen Family | Mumbai, India</p>
   <div style="margin-top:16px;">
     <span class="badge">🤖 LangGraph Agent</span>
-    <span class="badge">📄 Multi-Modal Inputs</span>
+    <span class="badge">[DOC] Multi-Modal Inputs</span>
     <span class="badge">⚖️ COB Coordination</span>
-    <span class="badge">✅ Pre-Auth Ready</span>
+    <span class="badge">[OK] Pre-Auth Ready</span>
     <span class="badge">📅 {today}</span>
   </div>
 </div>
@@ -549,7 +549,7 @@ def _generate_html_report(
 
 <!-- ═══════════════════════════ FINANCIAL BREAKDOWN ═════════════ -->
 <div class="section">
-  <div class="section-title">💰 Detailed Financial Breakdown</div>
+  <div class="section-title">[CALC] Detailed Financial Breakdown</div>
 
   <!-- Aarav breakdown -->
   <div class="card">
@@ -677,17 +677,17 @@ def _generate_html_report(
           <td><span class="tag">{cpt}</span></td>
           <td style="font-size:0.8rem;">{info.get("description", "")[:60]}</td>
           <td>{info.get("patient", "")}</td>
-          <td>{"<span class='preauth-pill preauth-required'>⚠️ Required</span>" if info.get("plan_a_required") else "<span class='preauth-pill preauth-ok'>✅ Not Required</span>"}</td>
-          <td>{"<span class='preauth-pill preauth-required'>⚠️ Required</span>" if info.get("plan_b_required") else "<span class='preauth-pill preauth-ok'>✅ Not Required</span>"}</td>
+          <td>{"<span class='preauth-pill preauth-required'>[WARN] Required</span>" if info.get("plan_a_required") else "<span class='preauth-pill preauth-ok'>[OK] Not Required</span>"}</td>
+          <td>{"<span class='preauth-pill preauth-required'>[WARN] Required</span>" if info.get("plan_b_required") else "<span class='preauth-pill preauth-ok'>[OK] Not Required</span>"}</td>
         </tr>''' for cpt, info in preauth.items())}
       </tbody>
     </table>
   </div>
 
   <!-- Pre-auth letters -->
-  <div class="section-title" style="margin-top:24px;">📄 Generated Pre-Authorization Letters</div>
+  <div class="section-title" style="margin-top:24px;">[DOC] Generated Pre-Authorization Letters</div>
   <div class="letter-card">
-    <span class="letter-icon">📄</span>
+    <span class="letter-icon">[DOC]</span>
     <div class="letter-info">
       <strong>Pre-Authorization Request — Plan A (Insurer1)</strong>
       <span>CPT 29888 + CPT 29881 | Aarav Sen | CorporateCare Gold Plan</span>
@@ -695,7 +695,7 @@ def _generate_html_report(
     <span class="badge">PDF Generated</span>
   </div>
   <div class="letter-card">
-    <span class="letter-icon">📄</span>
+    <span class="letter-icon">[DOC]</span>
     <div class="letter-info">
       <strong>Pre-Authorization Request — Plan B (Insurer2)</strong>
       <span>CPT 29888 + CPT 29881 | Aarav Sen | PremiumShield Platinum Plan</span>

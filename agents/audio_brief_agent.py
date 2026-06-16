@@ -104,19 +104,19 @@ This has been your DuCO Agent briefing. Good luck with the surgery, Aarav!
         try:
             tts = gTTS(text=script, lang="en", slow=False, tld="co.in")
             tts.save(audio_path)
-            print(f"  ✅ Audio brief saved: {audio_path}")
-            messages.append(f"✅ Audio brief generated: {audio_path}")
+            print(f"  [OK] Audio brief saved: {audio_path}")
+            messages.append(f"[OK] Audio brief generated: {audio_path}")
         except Exception as e:
-            print(f"  ⚠️  Audio generation failed: {e}")
+            print(f"  [WARN]  Audio generation failed: {e}")
             audio_path = None
-            messages.append(f"⚠️  Audio generation failed: {str(e)[:100]}")
+            messages.append(f"[WARN]  Audio generation failed: {str(e)[:100]}")
     else:
-        print("  ⚠️  gTTS not installed — audio skipped. Install with: pip install gTTS")
+        print("  [WARN]  gTTS not installed — audio skipped. Install with: pip install gTTS")
         audio_path = None
-        messages.append("⚠️  gTTS not installed — audio script saved as text only")
+        messages.append("[WARN]  gTTS not installed — audio script saved as text only")
 
-    print("  ✅ DuCO-Agent pipeline complete! 🎉")
-    messages.append("✅ DuCO-Agent full pipeline COMPLETE")
+    print("  [OK] DuCO-Agent pipeline complete! 🎉")
+    messages.append("[OK] DuCO-Agent full pipeline COMPLETE")
 
     return {
         "audio_brief_text": script,

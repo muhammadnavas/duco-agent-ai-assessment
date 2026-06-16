@@ -29,7 +29,7 @@ console = Console()
 
 def print_banner():
     console.print(Panel.fit(
-        "[bold blue]DuCO-Agent[/bold blue] — [cyan]Dual Coverage Optimization[/cyan]\n"
+        "[bold blue]DuCO-Agent[/bold blue] - [cyan]Dual Coverage Optimization[/cyan]\n"
         "[dim]Agentic Multi-Modal AI System | LangGraph Pipeline[/dim]\n"
         "[yellow]Prudential Health India Assessment 2026[/yellow]",
         border_style="blue",
@@ -68,7 +68,7 @@ def check_env():
             border_style="red"
         ))
         sys.exit(1)
-    console.print(f"[green]✅ Google API Key found[/green] [dim](***{api_key[-4:]})[/dim]")
+    console.print(f"[green]OK Google API Key found[/green] [dim](***{api_key[-4:]})[/dim]")
 
 
 def run_pipeline():
@@ -156,7 +156,7 @@ def print_results(state: dict):
     table.add_row("Insurance Covers (Both Plans)", f"₹{family.get('total_covered_by_insurance', 0):,.2f}",)
     table.add_row("Plan B (Insurer2) Total Pays", f"₹{family.get('plan_b_total_pays', 0):,.2f}")
     table.add_row("Plan A (Insurer1) Total Pays", f"₹{family.get('plan_a_total_pays', 0):,.2f}")
-    table.add_separator()
+    table.add_row("", "")  # spacer
     table.add_row("[bold red]Family Out-of-Pocket (OOP)", f"[bold red]₹{family.get('total_family_oop', 0):,.2f}")
     table.add_row("[green]Savings from Dual Coverage", f"[green]₹{family.get('total_savings_from_dual_coverage', 0):,.2f}")
     table.add_row("Coverage Percentage", f"{family.get('coverage_percentage', 0):.1f}%")

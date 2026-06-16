@@ -36,7 +36,7 @@ def parse_mri_report(pdf_path: str) -> dict:
     raw_text = extract_text_from_pdf(pdf_path)
 
     # Then use Gemini to structure the clinical content
-    model = genai.GenerativeModel("gemini-1.5-pro")
+    model = genai.GenerativeModel("gemini-2.5-flash")
 
     prompt = f"""You are a clinical AI assistant specializing in radiology report interpretation.
 
@@ -184,7 +184,7 @@ def parse_user_query(txt_path: str) -> dict:
     with open(txt_path, "r", encoding="utf-8") as f:
         content = f.read()
 
-    model = genai.GenerativeModel("gemini-1.5-pro")
+    model = genai.GenerativeModel("gemini-2.5-flash")
     prompt = f"""You are a health insurance AI assistant. A patient has submitted this voice-to-text query:
 
 QUERY:

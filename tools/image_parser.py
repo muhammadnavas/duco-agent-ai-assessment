@@ -40,7 +40,7 @@ def parse_pt_invoice(image_path: str) -> dict:
     Parse a Physical Therapy invoice image using Gemini Vision.
     Extracts patient info, dates, service descriptions, amounts, and any handwritten notes.
     """
-    model = genai.GenerativeModel("gemini-1.5-pro")
+    model = genai.GenerativeModel("gemini-2.5-flash")
     
     image_data = encode_image_to_base64(image_path)
     mime_type = get_image_mime_type(image_path)
@@ -141,7 +141,7 @@ def parse_surgeon_estimate(image_path: str) -> dict:
     Parse a surgeon's billing estimate image using Gemini Vision.
     Extracts CPT codes, descriptions, and charges.
     """
-    model = genai.GenerativeModel("gemini-1.5-pro")
+    model = genai.GenerativeModel("gemini-2.5-flash")
     
     image_data = encode_image_to_base64(image_path)
     mime_type = get_image_mime_type(image_path)
