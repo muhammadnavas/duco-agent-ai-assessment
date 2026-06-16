@@ -45,6 +45,7 @@ outputs/*.pdf
 outputs/*.mp3
 outputs/*.html
 outputs/*.png
+outputs/*.txt
 mock_inputs/*.pdf
 
 # Logs
