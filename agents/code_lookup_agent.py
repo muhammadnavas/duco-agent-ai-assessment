@@ -38,7 +38,7 @@ def run_code_lookup_agent(state: dict) -> dict:
     # ── 1. Infer CPT codes for PT Invoice ─────────────────────
     pt_invoice = parsed.get("pt_invoice", {})
     if not pt_invoice.get("cpt_codes_present", False):
-        print("  🔍 PT invoice has no CPT codes — inferring from description...")
+        print("  [SEARCH] PT invoice has no CPT codes — inferring from description...")
         pt_description = pt_invoice.get("clinical_description", "")
         handwritten = " ".join(pt_invoice.get("handwritten_notes", []))
         full_description = f"{pt_description} {handwritten}"
@@ -66,8 +66,8 @@ def run_code_lookup_agent(state: dict) -> dict:
             code["claim_type"] = "physical_therapy"
             all_icd10_codes.append(code)
 
-        messages.append(f"✅ PT Invoice: Inferred CPT codes: {[c['cpt_code'] for c in pt_cpt_codes]}")
-        messages.append(f"✅ PT Invoice: Inferred ICD-10 codes: {[i['icd10_code'] for i in pt_icd_codes]}")
+        messages.append(f"[OK] PT Invoice: Inferred CPT codes: {[c['cpt_code'] for c in pt_cpt_codes]}")
+        messages.append(f"[OK] PT Invoice: Inferred ICD-10 codes: {[i['icd10_code'] for i in pt_icd_codes]}")
     else:
         # Extract existing codes from line items
         for item in pt_invoice.get("line_items", []):
@@ -97,7 +97,7 @@ def run_code_lookup_agent(state: dict) -> dict:
         details["source"] = "extracted"
         all_cpt_codes.append(details)
 
-    messages.append(f"✅ Surgeon Estimate: Confirmed CPT codes: {[p['cpt_code'] for p in surgeon_est.get('procedure_codes', [])]}")
+    messages.append(f"[OK] Surgeon Estimate: Confirmed CPT codes: {[p['cpt_code'] for p in surgeon_est.get('procedure_codes', [])]}")
 
     # ── 3. Process MRI Report ICD-10 Codes ───────────────────
     mri_report = parsed.get("mri_report", {})
@@ -113,7 +113,8 @@ def run_code_lookup_agent(state: dict) -> dict:
         if not any(x["icd10_code"] == icd_entry["icd10_code"] for x in all_icd10_codes):
             all_icd10_codes.append(icd_entry)
 
-    messages.append(f"✅ MRI Report: Confirmed ICD-10 codes: {[i['icd10_code'] for i in mri_report.get('icd10_codes', [])]}")
+    mri_icd_codes = [i.get("code") or i.get("icd10_code", "") for i in mri_report.get("icd10_codes", [])]
+    messages.append(f"[OK] MRI Report: Confirmed ICD-10 codes: {mri_icd_codes}")
 
     # ── 4. Validate Codes ─────────────────────────────────────
     validation_errors = []
@@ -139,10 +140,10 @@ def run_code_lookup_agent(state: dict) -> dict:
         validation_errors.append("MISSING: CPT 29881 (Meniscectomy) for Aarav")
 
     if validation_errors:
-        print(f"  ⚠️  Validation issues ({len(validation_errors)}): {validation_errors}")
+        print(f"  [WARN]  Validation issues ({len(validation_errors)}): {validation_errors}")
         new_retry_count = retry_count + 1
     else:
-        print(f"  ✅ Code validation passed: {len(all_cpt_codes)} CPT + {len(all_icd10_codes)} ICD-10 codes")
+        print(f"  [OK] Code validation passed: {len(all_cpt_codes)} CPT + {len(all_icd10_codes)} ICD-10 codes")
         new_retry_count = retry_count
 
     return {
@@ -160,7 +161,7 @@ def run_code_lookup_agent(state: dict) -> dict:
 def _llm_infer_cpt(clinical_description: str, line_items: list) -> list[dict]:
     """Use Gemini to infer CPT codes from clinical description."""
     try:
-        model = genai.GenerativeModel("gemini-1.5-pro")
+        model = genai.GenerativeModel("gemini-2.5-flash")
         items_text = "\n".join([f"  - {item.get('description', '')}: ₹{item.get('total', 0)}" for item in line_items])
         prompt = f"""You are a medical coding specialist. Based on this clinical description and service line items, identify the most appropriate CPT codes.
 
@@ -195,7 +196,7 @@ Return ONLY valid JSON array."""
         codes = json.loads(raw)
         return codes if isinstance(codes, list) else []
     except Exception as e:
-        print(f"  ⚠️  LLM CPT inference failed: {e}")
+        print(f"  [WARN]  LLM CPT inference failed: {e}")
         # Deterministic fallback
         return [
             {
@@ -220,7 +221,7 @@ Return ONLY valid JSON array."""
 def _llm_infer_icd10(clinical_description: str, diagnosis: str) -> list[dict]:
     """Use Gemini to infer ICD-10 codes from clinical description."""
     try:
-        model = genai.GenerativeModel("gemini-1.5-pro")
+        model = genai.GenerativeModel("gemini-2.5-flash")
         prompt = f"""You are a medical coding specialist. Based on this clinical information, identify the appropriate ICD-10-CM codes.
 
 Clinical Description: {clinical_description}
@@ -246,7 +247,7 @@ RULES:
         codes = json.loads(raw)
         return codes if isinstance(codes, list) else []
     except Exception as e:
-        print(f"  ⚠️  LLM ICD-10 inference failed: {e}")
+        print(f"  [WARN]  LLM ICD-10 inference failed: {e}")
         return [
             {
                 "icd10_code": "M54.5",

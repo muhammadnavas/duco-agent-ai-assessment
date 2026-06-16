@@ -34,77 +34,77 @@ def run_intake_agent(state: dict) -> dict:
     # ── 1. Parse PT Invoice (Image → Vision) ──────────────────
     pt_invoice_path = raw_inputs.get("pt_invoice", os.path.join(inputs_dir, "priya_pt_invoice.png"))
     if os.path.exists(pt_invoice_path):
-        print(f"  📄 Parsing PT invoice: {pt_invoice_path}")
+        print(f"  [DOC] Parsing PT invoice: {pt_invoice_path}")
         try:
             parsed["pt_invoice"] = parse_pt_invoice(pt_invoice_path)
             total = parsed["pt_invoice"].get("total_amount", 0)
-            messages.append(f"✅ PT Invoice parsed: ₹{total:,.0f} total for {parsed['pt_invoice'].get('patient_name', 'Unknown')}")
+            messages.append(f"[OK] PT Invoice parsed: ₹{total:,.0f} total for {parsed['pt_invoice'].get('patient_name', 'Unknown')}")
         except Exception as e:
             errors.append(f"PT invoice parse error: {str(e)}")
             # Use fallback
             parsed["pt_invoice"] = _fallback_pt_invoice()
-            messages.append(f"⚠️  PT invoice fallback used: {str(e)[:100]}")
+            messages.append(f"[WARN]  PT invoice fallback used: {str(e)[:100]}")
     else:
         errors.append(f"PT invoice not found: {pt_invoice_path}")
         parsed["pt_invoice"] = _fallback_pt_invoice()
-        messages.append(f"⚠️  PT invoice not found, using mock data")
+        messages.append(f"[WARN]  PT invoice not found, using mock data")
 
     # ── 2. Parse MRI Report (PDF → Text + Gemini) ─────────────
     mri_path = raw_inputs.get("mri_report", os.path.join(inputs_dir, "aarav_mri_report.pdf"))
     if os.path.exists(mri_path):
-        print(f"  📄 Parsing MRI report: {mri_path}")
+        print(f"  [DOC] Parsing MRI report: {mri_path}")
         try:
             parsed["mri_report"] = parse_mri_report(mri_path)
             diagnoses = parsed["mri_report"].get("diagnoses", [])
-            messages.append(f"✅ MRI Report parsed: {len(diagnoses)} diagnoses for {parsed['mri_report'].get('patient_name', 'Unknown')}")
+            messages.append(f"[OK] MRI Report parsed: {len(diagnoses)} diagnoses for {parsed['mri_report'].get('patient_name', 'Unknown')}")
         except Exception as e:
             errors.append(f"MRI report parse error: {str(e)}")
             parsed["mri_report"] = _fallback_mri_report()
-            messages.append(f"⚠️  MRI report fallback used: {str(e)[:100]}")
+            messages.append(f"[WARN]  MRI report fallback used: {str(e)[:100]}")
     else:
         errors.append(f"MRI report not found: {mri_path}")
         parsed["mri_report"] = _fallback_mri_report()
-        messages.append(f"⚠️  MRI report not found, using mock data")
+        messages.append(f"[WARN]  MRI report not found, using mock data")
 
     # ── 3. Parse Surgeon Estimate (Image → Vision) ─────────────
     surg_path = raw_inputs.get("surgeon_estimate", os.path.join(inputs_dir, "surgeon_estimate.jpg"))
     if os.path.exists(surg_path):
-        print(f"  📄 Parsing surgeon estimate: {surg_path}")
+        print(f"  [DOC] Parsing surgeon estimate: {surg_path}")
         try:
             parsed["surgeon_estimate"] = parse_surgeon_estimate(surg_path)
             total = parsed["surgeon_estimate"].get("total_estimated_charge", 0)
             procs = len(parsed["surgeon_estimate"].get("procedure_codes", []))
-            messages.append(f"✅ Surgeon estimate parsed: ₹{total:,.0f} total, {procs} procedures")
+            messages.append(f"[OK] Surgeon estimate parsed: ₹{total:,.0f} total, {procs} procedures")
         except Exception as e:
             errors.append(f"Surgeon estimate parse error: {str(e)}")
             parsed["surgeon_estimate"] = _fallback_surgeon_estimate()
-            messages.append(f"⚠️  Surgeon estimate fallback used: {str(e)[:100]}")
+            messages.append(f"[WARN]  Surgeon estimate fallback used: {str(e)[:100]}")
     else:
         errors.append(f"Surgeon estimate not found: {surg_path}")
         parsed["surgeon_estimate"] = _fallback_surgeon_estimate()
-        messages.append(f"⚠️  Surgeon estimate not found, using mock data")
+        messages.append(f"[WARN]  Surgeon estimate not found, using mock data")
 
     # ── 4. Parse User Query (Text → NLP) ──────────────────────
     query_path = raw_inputs.get("user_query", os.path.join(inputs_dir, "user_query.txt"))
     if os.path.exists(query_path):
-        print(f"  📄 Parsing user query: {query_path}")
+        print(f"  [DOC] Parsing user query: {query_path}")
         try:
             parsed["user_query"] = parse_user_query(query_path)
             requests = parsed["user_query"].get("key_requests", [])
-            messages.append(f"✅ User query parsed: {len(requests)} key requests identified")
+            messages.append(f"[OK] User query parsed: {len(requests)} key requests identified")
         except Exception as e:
             errors.append(f"User query parse error: {str(e)}")
             parsed["user_query"] = _fallback_user_query()
-            messages.append(f"⚠️  User query fallback used: {str(e)[:100]}")
+            messages.append(f"[WARN]  User query fallback used: {str(e)[:100]}")
     else:
         parsed["user_query"] = _fallback_user_query()
-        messages.append(f"⚠️  User query not found, using mock data")
+        messages.append(f"[WARN]  User query not found, using mock data")
 
     # ── 5. Load Insurance Plan Configurations ─────────────────
-    messages.append("✅ Loaded Plan A (Insurer1) configuration — Priya primary, Aarav dependent")
-    messages.append("✅ Loaded Plan B (Insurer2) configuration — Aarav primary, Priya dependent")
+    messages.append("[OK] Loaded Plan A (Insurer1) configuration — Priya primary, Aarav dependent")
+    messages.append("[OK] Loaded Plan B (Insurer2) configuration — Aarav primary, Priya dependent")
 
-    print(f"  ✅ Intake complete: {len(parsed)} documents parsed, {len(errors)} errors")
+    print(f"  [OK] Intake complete: {len(parsed)} documents parsed, {len(errors)} errors")
 
     return {
         "parsed_documents": parsed,

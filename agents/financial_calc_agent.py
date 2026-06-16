@@ -49,7 +49,7 @@ def run_financial_calc_agent(state: dict) -> dict:
     # AARAV'S SURGERY — ACL Reconstruction + Meniscectomy
     # Primary: Plan B (Insurer2) | Secondary: Plan A (Insurer1)
     # ════════════════════════════════════════════════════════
-    print("  💰 Calculating Aarav's surgery costs (Primary: Plan B, Secondary: Plan A)...")
+    print("  [CALC] Calculating Aarav's surgery costs (Primary: Plan B, Secondary: Plan A)...")
 
     # ── Plan B (Primary) — Aarav's deductible: ₹25,000 (none met YTD) ──
     plan_b_deductible_aarav = ben_b["annual_deductible_individual"]
@@ -159,7 +159,7 @@ def run_financial_calc_agent(state: dict) -> dict:
     # PRIYA'S PT BILLS — Physical Therapy
     # Primary: Plan A (Insurer1) | Secondary: Plan B (Insurer2)
     # ════════════════════════════════════════════════════════
-    print("  💰 Calculating Priya's PT costs (Primary: Plan A, Secondary: Plan B)...")
+    print("  [CALC] Calculating Priya's PT costs (Primary: Plan A, Secondary: Plan B)...")
 
     billed_total_priya = parsed.get("pt_invoice", {}).get("total_amount", 30000)
 
@@ -263,14 +263,14 @@ def run_financial_calc_agent(state: dict) -> dict:
         }
     }
 
-    print(f"  ✅ Total billed: ₹{total_billed:,.0f}")
-    print(f"  ✅ Insurance covers: ₹{total_insurance:,.0f} ({financial_breakdown['family_summary']['coverage_percentage']}%)")
-    print(f"  ✅ Family OOP: ₹{total_oop:,.0f}")
-    print(f"  ✅ Savings from dual coverage: ₹{total_savings:,.0f}")
+    print(f"  [OK] Total billed: ₹{total_billed:,.0f}")
+    print(f"  [OK] Insurance covers: ₹{total_insurance:,.0f} ({financial_breakdown['family_summary']['coverage_percentage']}%)")
+    print(f"  [OK] Family OOP: ₹{total_oop:,.0f}")
+    print(f"  [OK] Savings from dual coverage: ₹{total_savings:,.0f}")
 
-    messages.append(f"✅ Aarav OOP: ₹{aarav_oop:,.2f} (saved ₹{aarav_savings:,.2f} from dual coverage)")
-    messages.append(f"✅ Priya OOP: ₹{priya_oop:,.2f} (saved ₹{priya_savings:,.2f} from dual coverage)")
-    messages.append(f"✅ Family total OOP: ₹{total_oop:,.2f} on ₹{total_billed:,.0f} in bills")
+    messages.append(f"[OK] Aarav OOP: ₹{aarav_oop:,.2f} (saved ₹{aarav_savings:,.2f} from dual coverage)")
+    messages.append(f"[OK] Priya OOP: ₹{priya_oop:,.2f} (saved ₹{priya_savings:,.2f} from dual coverage)")
+    messages.append(f"[OK] Family total OOP: ₹{total_oop:,.2f} on ₹{total_billed:,.0f} in bills")
 
     return {
         "financial_breakdown": financial_breakdown,

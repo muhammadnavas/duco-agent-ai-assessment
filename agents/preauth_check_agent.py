@@ -28,7 +28,7 @@ def run_preauth_check_agent(state: dict) -> dict:
     messages = []
     preauth_required = {}
 
-    print(f"  🔍 Checking pre-auth for {len(cpt_codes)} CPT codes...")
+    print(f"  [SEARCH] Checking pre-auth for {len(cpt_codes)} CPT codes...")
 
     for cpt_entry in cpt_codes:
         cpt = cpt_entry.get("cpt_code", "")
@@ -51,8 +51,8 @@ def run_preauth_check_agent(state: dict) -> dict:
             "both_required": plan_a_required and plan_b_required,
         }
 
-        status_a = "⚠️  REQUIRED" if plan_a_required else "✅ Not required"
-        status_b = "⚠️  REQUIRED" if plan_b_required else "✅ Not required"
+        status_a = "[WARN]  REQUIRED" if plan_a_required else "[OK] Not required"
+        status_b = "[WARN]  REQUIRED" if plan_b_required else "[OK] Not required"
         print(f"  CPT {cpt} ({patient}): Plan A={status_a} | Plan B={status_b}")
         messages.append(f"CPT {cpt} pre-auth: Plan A → {'Required' if plan_a_required else 'Not Required'} | Plan B → {'Required' if plan_b_required else 'Not Required'}")
 
@@ -62,13 +62,13 @@ def run_preauth_check_agent(state: dict) -> dict:
 
     if not preauth_required or not any_required:
         status = "not_required"
-        print("  ✅ No pre-authorization required for any procedure")
+        print("  [OK] No pre-authorization required for any procedure")
     elif all_required:
         status = "required"
-        print(f"  ⚠️  Pre-authorization REQUIRED for all {len(preauth_required)} procedure(s)")
+        print(f"  [WARN]  Pre-authorization REQUIRED for all {len(preauth_required)} procedure(s)")
     else:
         status = "partial"
-        print(f"  ⚠️  Pre-authorization REQUIRED for some procedures")
+        print(f"  [WARN]  Pre-authorization REQUIRED for some procedures")
 
     # ── Summary ───────────────────────────────────────────────
     surgical_codes = [cpt for cpt, v in preauth_required.items() if v["claim_type"] == "surgical"]

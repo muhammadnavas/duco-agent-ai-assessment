@@ -124,12 +124,12 @@ def run_cob_logic_agent(state: dict) -> dict:
     # ── LLM Reasoning for Clinical Explanation ────────────────
     cob_reasoning = _generate_cob_reasoning(cob_aarav, cob_priya, plan_a, plan_b)
 
-    messages.append(f"✅ COB Determination for Aarav: PRIMARY = {cob_aarav['primary_plan']['plan_name']}")
-    messages.append(f"✅ COB Determination for Priya: PRIMARY = {cob_priya['primary_plan']['plan_name']}")
-    messages.append(f"✅ COB Rule Applied: Subscriber Rule (policyholder vs dependent status)")
+    messages.append(f"[OK] COB Determination for Aarav: PRIMARY = {cob_aarav['primary_plan']['plan_name']}")
+    messages.append(f"[OK] COB Determination for Priya: PRIMARY = {cob_priya['primary_plan']['plan_name']}")
+    messages.append(f"[OK] COB Rule Applied: Subscriber Rule (policyholder vs dependent status)")
 
-    print(f"  ✅ Aarav: PRIMARY → Plan B (Insurer2) | SECONDARY → Plan A (Insurer1)")
-    print(f"  ✅ Priya: PRIMARY → Plan A (Insurer1) | SECONDARY → Plan B (Insurer2)")
+    print(f"  [OK] Aarav: PRIMARY → Plan B (Insurer2) | SECONDARY → Plan A (Insurer1)")
+    print(f"  [OK] Priya: PRIMARY → Plan A (Insurer1) | SECONDARY → Plan B (Insurer2)")
 
     return {
         "cob_aarav": cob_aarav,
@@ -143,7 +143,7 @@ def run_cob_logic_agent(state: dict) -> dict:
 def _generate_cob_reasoning(cob_aarav: dict, cob_priya: dict, plan_a: dict, plan_b: dict) -> str:
     """Use Gemini to generate a clear, clinically sound COB reasoning explanation."""
     try:
-        model = genai.GenerativeModel("gemini-1.5-pro")
+        model = genai.GenerativeModel("gemini-2.5-flash")
         prompt = f"""You are a senior health insurance COB (Coordination of Benefits) specialist.
 
 SCENARIO:
@@ -175,7 +175,7 @@ Keep it under 400 words."""
         return response.text.strip()
 
     except Exception as e:
-        print(f"  ⚠️  LLM COB reasoning failed: {e}")
+        print(f"  [WARN]  LLM COB reasoning failed: {e}")
         return """
 **Coordination of Benefits (COB) Explanation for the Sen Family**
 
