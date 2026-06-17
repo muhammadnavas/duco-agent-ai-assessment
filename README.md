@@ -1,9 +1,5 @@
 # 🏥 DuCO-Agent: Dual Coverage Optimization AI System
 
-[![Python](https://img.shields.io/badge/Python-3.10+-blue?logo=python)](https://python.org)
-[![LangGraph](https://img.shields.io/badge/LangGraph-0.2+-green?logo=langchain)](https://langchain-ai.github.io/langgraph/)
-[![Gemini](https://img.shields.io/badge/Gemini-1.5--Pro-orange?logo=google)](https://ai.google.dev)
-
 > An Agentic, Multi-Modal AI System for Insurance Coordination of Benefits (COB)
 
 DuCO-Agent is an AI-powered pipeline built with LangGraph and Google's Gemini models. It automates the complex process of healthcare insurance Coordination of Benefits (COB) when a patient has dual coverage (e.g., primary and secondary insurance plans).

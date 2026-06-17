@@ -69,12 +69,12 @@ def run_letter_gen_agent(state: dict) -> dict:
         letter_data=letter_data,
         plan_name="Insurer1 Health Insurance Ltd.",
         plan_id="INSURER1-PLAN-A-2026",
-        plan_type="Plan A — CorporateCare Gold Plan",
+        plan_type="Plan A - CorporateCare Gold Plan",
         member_id=patient_info["member_id_plan_a"],
         policy_number="IC1-MUM-2026-PRY-001",
         member_role="Dependent (Spouse of Priya Sen)",
         output_path=os.path.join(output_dir, "preauth_letter_plan_a.pdf"),
-        insurer_address="Insurer1 Health Insurance Ltd.\nPre-Authorization Department\n4th Floor, Insurance Tower\nBandra Kurla Complex, Mumbai — 400051",
+        insurer_address="Insurer1 Health Insurance Ltd.\nPre-Authorization Department\n4th Floor, Insurance Tower\nBandra Kurla Complex, Mumbai - 400051",
     )
     messages.append(f"[OK] Pre-auth letter generated for Plan A: {letter_a_path}")
 
@@ -83,12 +83,12 @@ def run_letter_gen_agent(state: dict) -> dict:
         letter_data=letter_data,
         plan_name="Insurer2 Assurance Corporation",
         plan_id="INSURER2-PLAN-B-2026",
-        plan_type="Plan B — PremiumShield Platinum Plan",
+        plan_type="Plan B - PremiumShield Platinum Plan",
         member_id=patient_info["member_id_plan_b"],
         policy_number="IC2-MUM-2026-ARV-001",
         member_role="Primary Policyholder",
         output_path=os.path.join(output_dir, "preauth_letter_plan_b.pdf"),
-        insurer_address="Insurer2 Assurance Corporation\nMedical Authorization Unit\n12th Floor, Prestige Business Park\nLower Parel, Mumbai — 400013",
+        insurer_address="Insurer2 Assurance Corporation\nMedical Authorization Unit\n12th Floor, Prestige Business Park\nLower Parel, Mumbai - 400013",
     )
     messages.append(f"[OK] Pre-auth letter generated for Plan B: {letter_b_path}")
 
@@ -137,7 +137,7 @@ def _generate_preauth_pdf(
     label = ParagraphStyle("Label", fontSize=9, fontName="Helvetica-Bold",
                            textColor=colors.HexColor("#555"), spaceAfter=2)
 
-    story.append(Paragraph("PRE-AUTHORIZATION REQUEST — SURGICAL PROCEDURE", h1))
+    story.append(Paragraph("PRE-AUTHORIZATION REQUEST - SURGICAL PROCEDURE", h1))
     story.append(Paragraph(f"Submitted to: {plan_name} | {plan_type}", h2))
     story.append(HRFlowable(width="100%", thickness=2, color=colors.HexColor("#1a3a5c")))
     story.append(Spacer(1, 10))
@@ -207,8 +207,8 @@ def _generate_preauth_pdf(
 
     story.append(Paragraph("REQUESTED PROCEDURES / CPT CODES", bold))
     proc_header = [["CPT Code", "Procedure Description", "Estimated Charge (INR)"]]
-    proc_rows = [[p["cpt"], p["desc"], f"₹{p['charge']:,.0f}"] for p in letter_data["procedures"]]
-    proc_rows.append(["", "TOTAL ESTIMATED CHARGES", f"₹{letter_data['total_charge']:,.0f}"])
+    proc_rows = [[p["cpt"], p["desc"], f"INR {p['charge']:,.0f}"] for p in letter_data["procedures"]]
+    proc_rows.append(["", "TOTAL ESTIMATED CHARGES", f"INR {letter_data['total_charge']:,.0f}"])
     proc_table = Table(proc_header + proc_rows, colWidths=[2.5*cm, 13*cm, 4*cm])
     proc_table.setStyle(TableStyle([
         ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
