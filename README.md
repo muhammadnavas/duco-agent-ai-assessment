@@ -70,6 +70,13 @@ Once the pipeline completes, check the `outputs/` directory for:
 - `preauth_letter_plan_b.pdf` (Pre-authorization request)
 - `audio_brief.mp3` (Spoken summary)
 
+### 6. Run Unit Tests
+
+To verify the mathematical accuracy and COB rules logic of the financial calculation agent:
+```bash
+python -m pytest tests/
+```
+
 ---
 
 ## 📂 Architecture & Structure
