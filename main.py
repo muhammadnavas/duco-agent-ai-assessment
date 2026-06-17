@@ -20,8 +20,7 @@ console = Console()
 def print_banner():
     console.print(Panel.fit(
         "[bold blue]DuCO-Agent[/bold blue] - [cyan]Dual Coverage Optimization[/cyan]\n"
-        "[dim]Agentic Multi-Modal AI System | LangGraph Pipeline[/dim]\n"
-        "[yellow]Prudential Health India Assessment 2026[/yellow]",
+        "[dim]Agentic Multi-Modal AI System | LangGraph Pipeline[/dim]",
         border_style="blue",
         padding=(1, 4),
     ))

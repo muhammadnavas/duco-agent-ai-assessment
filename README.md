@@ -5,7 +5,6 @@
 [![Gemini](https://img.shields.io/badge/Gemini-1.5--Pro-orange?logo=google)](https://ai.google.dev)
 [![License](https://img.shields.io/badge/License-Private-red)](.)
 
-> **Prudential Health India — Offline Assessment 2026**
 > An Agentic, Multi-Modal AI System for Insurance Coordination of Benefits (COB)
 
 ---
@@ -222,7 +221,7 @@ docs(readme): add setup instructions and API key configuration
 
 ---
 
-## 📄 Assessment Rubric Alignment
+## 📄 Technical Highlights
 
 | Rubric Category | Implementation |
 |----------------|----------------|
@@ -235,7 +234,7 @@ docs(readme): add setup instructions and API key configuration
 
 ## 👥 Team
 
-Built for Prudential Health India Offline Assessment — June 2026
+Muhammad Navas — DuCO-Agent AI System
 
 ---
 
