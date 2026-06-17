@@ -41,7 +41,7 @@ def generate_mri_report():
         "Title", fontSize=13, fontName="Helvetica-Bold",
         alignment=TA_CENTER, textColor=colors.HexColor("#d32f2f"), spaceAfter=6
     )
-    story.append(Paragraph("MRI EXAMINATION REPORT — RIGHT KNEE", title_style))
+    story.append(Paragraph("MRI EXAMINATION REPORT - RIGHT KNEE", title_style))
     story.append(HRFlowable(width="100%", thickness=1, color=colors.HexColor("#aaaaaa")))
     story.append(Spacer(1, 10))
 
@@ -109,7 +109,7 @@ def generate_mri_report():
 
     story.append(Paragraph("<b>1. Anterior Cruciate Ligament (ACL):</b>", finding_style))
     story.append(Paragraph(
-        "• <b>Complete tear of the anterior cruciate ligament (ACL)</b> is identified. The ACL fibers are discontinuous "
+        "- <b>Complete tear of the anterior cruciate ligament (ACL)</b> is identified. The ACL fibers are discontinuous "
         "with diffuse T2 hyperintense signal throughout the ligament substance. The ligament demonstrates a horizontal "
         "orientation (Blumensaat sign disrupted) with laxity and redundancy of residual fibers. Bone contusions are "
         "noted at the lateral femoral condyle and posterior lateral tibial plateau, consistent with the classic pivot "
@@ -119,14 +119,14 @@ def generate_mri_report():
 
     story.append(Paragraph("<b>2. Posterior Cruciate Ligament (PCL):</b>", finding_style))
     story.append(Paragraph(
-        "• Intact. The PCL demonstrates normal low T2 signal intensity with preserved fiber continuity and normal "
+        "- Intact. The PCL demonstrates normal low T2 signal intensity with preserved fiber continuity and normal "
         "posterior bow configuration. No signal abnormality or discontinuity.",
         finding_style
     ))
 
     story.append(Paragraph("<b>3. Medial Meniscus:</b>", finding_style))
     story.append(Paragraph(
-        "• <b>Grade III signal abnormality (tear) of the medial meniscus</b> is identified. A complex, oblique tear "
+        "- <b>Grade III signal abnormality (tear) of the medial meniscus</b> is identified. A complex, oblique tear "
         "is present involving the posterior horn and body of the medial meniscus, extending to the inferior articular "
         "surface. The tear measures approximately 12mm in longitudinal extent. Associated meniscal extrusion of "
         "approximately 3.5mm is noted at the mid-body level. The anterior horn appears intact.",
@@ -135,7 +135,7 @@ def generate_mri_report():
 
     story.append(Paragraph("<b>4. Lateral Meniscus:</b>", finding_style))
     story.append(Paragraph(
-        "• Grade I-II intrameniscal signal change is noted in the posterior horn of the lateral meniscus, "
+        "- Grade I-II intrameniscal signal change is noted in the posterior horn of the lateral meniscus, "
         "not extending to the articular surface. This likely represents intrasubstance degeneration rather "
         "than a true tear. No discrete tear identified.",
         finding_style
@@ -143,25 +143,25 @@ def generate_mri_report():
 
     story.append(Paragraph("<b>5. Medial Collateral Ligament (MCL):</b>", finding_style))
     story.append(Paragraph(
-        "• Mild periligamentous edema noted adjacent to the superficial MCL, consistent with Grade I sprain. "
+        "- Mild periligamentous edema noted adjacent to the superficial MCL, consistent with Grade I sprain. "
         "No discontinuity of ligament fibers.",
         finding_style
     ))
 
     story.append(Paragraph("<b>6. Lateral Collateral Ligament / Posterolateral Corner:</b>", finding_style))
-    story.append(Paragraph("• Intact. No signal abnormality or fiber disruption identified.", finding_style))
+    story.append(Paragraph("- Intact. No signal abnormality or fiber disruption identified.", finding_style))
 
     story.append(Paragraph("<b>7. Patellofemoral Joint:</b>", finding_style))
     story.append(Paragraph(
-        "• Mild patellar tendinopathy. Minimal joint effusion with moderate knee joint effusion noted "
+        "- Mild patellar tendinopathy. Minimal joint effusion with moderate knee joint effusion noted "
         "(estimated 15-20mL). No loose bodies identified. Articular cartilage of the patellofemoral "
         "joint appears intact.",
         finding_style
     ))
 
-    story.append(Paragraph("<b>8. Bone Marrow & Osseous Structures:</b>", finding_style))
+    story.append(Paragraph("<b>8. Bone Marrow &amp; Osseous Structures:</b>", finding_style))
     story.append(Paragraph(
-        "• Bone marrow contusions at the lateral femoral condyle and posterolateral tibial plateau as described. "
+        "- Bone marrow contusions at the lateral femoral condyle and posterolateral tibial plateau as described. "
         "No fracture lines identified. No avascular necrosis. Tibial plateau intact.",
         finding_style
     ))
@@ -169,8 +169,8 @@ def generate_mri_report():
     # Impression
     story.append(Paragraph("IMPRESSION / CONCLUSION", section_style))
     impression_data = [
-        ["1.", "COMPLETE TEAR OF THE ANTERIOR CRUCIATE LIGAMENT (ACL) — Right Knee"],
-        ["2.", "COMPLEX TEAR OF THE MEDIAL MENISCUS — Posterior horn and body, Grade III"],
+        ["1.", "COMPLETE TEAR OF THE ANTERIOR CRUCIATE LIGAMENT (ACL) - Right Knee"],
+        ["2.", "COMPLEX TEAR OF THE MEDIAL MENISCUS - Posterior horn and body, Grade III"],
         ["3.", "Bone contusions: Lateral femoral condyle and posterolateral tibial plateau (pivot shift pattern)"],
         ["4.", "Grade I MCL sprain"],
         ["5.", "Moderate knee joint effusion"],
@@ -207,8 +207,8 @@ def generate_mri_report():
     story.append(Paragraph("RELEVANT DIAGNOSTIC CODES (ICD-10-CM)", section_style))
     icd_data = [
         ["ICD-10 Code", "Description"],
-        ["M23.619", "Other spontaneous disruption of ACL — Right Knee"],
-        ["M23.209", "Derangement of unspecified meniscus — Right Knee (Medial)"],
+        ["M23.619", "Other spontaneous disruption of ACL - Right Knee"],
+        ["M23.209", "Derangement of unspecified meniscus - Right Knee (Medial)"],
         ["M25.361", "Stiffness of right knee, NEC"],
         ["S83.511A", "Sprain of ACL of right knee, initial encounter"],
     ]
